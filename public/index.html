@@ -591,7 +591,26 @@
   .jr-youasked { font: 12px/1.6 Arial, Helvetica, sans-serif; color: #444; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 0; }
   .jr-youasked b { color: #000; }
   .jr-card { display: flex; gap: 12px; align-items: flex-start; background: #f2f7fd; border: 1px solid #d9e4f2; padding: 12px 14px; margin-top: 12px; }
-  .jr-card img { width: 46px; height: 46px; flex-shrink: 0; }
+  .jr-avatar { width: 72px; flex-shrink: 0; text-align: center; }
+  .jr-avatar img { width: 46px; height: 46px; }
+  .jr-action { font: italic 10px/1.35 Arial, Helvetica, sans-serif; color: #b5498a; margin-top: 3px; }
+  @keyframes jr-wiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(6deg); } }
+  @keyframes jr-tilt { 0%, 100% { transform: rotate(0); } 25%, 75% { transform: rotate(-16deg); } 50% { transform: rotate(16deg); } }
+  @keyframes jr-bounce { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-7px); } 50% { transform: translateY(0); } 70% { transform: translateY(-4px); } }
+  .jr-avatar img.anim-wiggle { animation: jr-wiggle .9s ease; }
+  .jr-avatar img.anim-tilt { animation: jr-tilt 1s ease; }
+  .jr-avatar img.anim-bounce { animation: jr-bounce .8s ease; }
+  #jeeves-thread > .jr-youasked:not(:first-child) { margin-top: 18px; }
+  .jr-reply { display: flex; margin-top: 10px; }
+  .page input.jeeves-r {
+    flex: 1;
+    font: 13px/1.3 Arial, Helvetica, sans-serif;
+    padding: 5px 8px;
+    border: 1px solid #7f9db9;
+    border-right: 0;
+    background: #fff;
+    color: #000;
+  }
   .jr-text { font: 13px/1.65 Arial, Helvetica, sans-serif; margin: 0; }
   .jr-text .jr-name { font-weight: bold; color: #17568c; }
   .jr-cursor {
@@ -979,11 +998,11 @@
         </div>
 
         <div class="jeeves-results" id="jeeves-results" aria-live="polite">
-          <p class="jr-youasked">You asked: <b id="jr-q"></b></p>
-          <div class="jr-card">
-            <img src="photos/jeeves_icon.svg" alt="">
-            <p class="jr-text"><span class="jr-name">Jeeeves says:</span><br><span id="jr-a"></span></p>
-          </div>
+          <div id="jeeves-thread"></div>
+          <form id="jeeves-reply" class="jr-reply">
+            <input type="text" id="jeeves-r" class="jeeves-r" maxlength="200" placeholder="Reply to Jeeeves…" aria-label="Reply to Jeeeves">
+            <button type="submit" class="jeeves-go">🦴 Reply</button>
+          </form>
           <p class="jr-powered">answers powered by ARTIFICIAL INTELLIGENCE* (*one dog, all natural, very smart)</p>
         </div>
 
@@ -1424,44 +1443,112 @@
   ];
   var jvInput = document.getElementById('jeeves-q');
   var jvResults = document.getElementById('jeeves-results');
-  var jvQ = document.getElementById('jr-q');
-  var jvA = document.getElementById('jr-a');
+  var jvThread = document.getElementById('jeeves-thread');
   var jvFallback = 0, jvThinkTimer = null, jvTypeTimer = null;
+  var jvHistory = []; // recent {q, a} pairs, sent along so replies have context
+  /* each ask appends a "You asked" line + answer card to the thread */
+  function newExchange(q) {
+    var asked = document.createElement('p');
+    asked.className = 'jr-youasked';
+    asked.appendChild(document.createTextNode('You asked: '));
+    var b = document.createElement('b');
+    b.textContent = q;
+    asked.appendChild(b);
+    var card = document.createElement('div');
+    card.className = 'jr-card';
+    var av = document.createElement('div');
+    av.className = 'jr-avatar';
+    var img = document.createElement('img');
+    img.src = 'photos/jeeves_icon.svg';
+    img.alt = '';
+    var act = document.createElement('div');
+    act.className = 'jr-action';
+    av.appendChild(img);
+    av.appendChild(act);
+    var txt = document.createElement('p');
+    txt.className = 'jr-text';
+    var name = document.createElement('span');
+    name.className = 'jr-name';
+    name.textContent = 'Jeeeves says:';
+    var ans = document.createElement('span');
+    txt.appendChild(name);
+    txt.appendChild(document.createElement('br'));
+    txt.appendChild(ans);
+    card.appendChild(av);
+    card.appendChild(txt);
+    jvThread.appendChild(asked);
+    jvThread.appendChild(card);
+    return { asked: asked, a: ans, dog: img, action: act };
+  }
   function jeevesAnswer(q) {
     for (var i = 0; i < JEEVES_QA.length; i++) {
       if (JEEVES_QA[i].match.test(q)) return JEEVES_QA[i].a;
     }
     return JEEVES_FALLBACKS[jvFallback++ % JEEVES_FALLBACKS.length];
   }
+  /* the avatar acts out *asterisk actions* instead of printing them */
+  function performAction(act, ex) {
+    ex.action.textContent = '*' + act + '*';
+    var cls = /tail|wag|thump/i.test(act) ? 'anim-wiggle'
+            : /ear|perk|tilt|head/i.test(act) ? 'anim-tilt'
+            : 'anim-bounce';
+    ex.dog.classList.remove('anim-wiggle', 'anim-tilt', 'anim-bounce');
+    void ex.dog.offsetWidth; /* restart the animation from frame 0 */
+    ex.dog.classList.add(cls);
+  }
   /* stream the answer word-by-word with a blinking cursor, like the fancy AI chatbots do */
-  function typeAnswer(text) {
+  function typeAnswer(text, ex) {
+    // split into typed-text and *action* segments
+    var segs = [], re = /\*([^*\n]{2,80})\*/g, last = 0, m;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) segs.push({ t: text.slice(last, m.index) });
+      segs.push({ act: m[1] });
+      last = re.lastIndex;
+    }
+    if (last < text.length) segs.push({ t: text.slice(last) });
+    for (var ti = 0; ti < segs.length; ti++) {
+      if (segs[ti].t) { segs[ti].t = segs[ti].t.replace(/^\s+/, ''); break; }
+    }
     var cursor = document.createElement('span');
     cursor.className = 'jr-cursor';
-    jvA.textContent = '';
-    jvA.appendChild(cursor);
-    var pos = 0;
+    ex.a.textContent = '';
+    ex.a.appendChild(cursor);
+    var si = 0, pos = 0;
     (function chunk() {
-      if (pos >= text.length) { cursor.remove(); return; }
-      var next = text.indexOf(' ', pos + 1);
-      if (next === -1) next = text.length;
-      cursor.before(document.createTextNode(text.slice(pos, next)));
+      if (si >= segs.length) { cursor.remove(); return; }
+      var seg = segs[si];
+      if (seg.act !== undefined) {
+        performAction(seg.act, ex);
+        si++;
+        pos = 0;
+        jvTypeTimer = setTimeout(chunk, 650);
+        return;
+      }
+      if (pos >= seg.t.length) { si++; pos = 0; chunk(); return; }
+      var next = seg.t.indexOf(' ', pos + 1);
+      if (next === -1) next = seg.t.length;
+      cursor.before(document.createTextNode(seg.t.slice(pos, next)));
       pos = next;
       jvTypeTimer = setTimeout(chunk, 25 + Math.random() * 95);
     })();
   }
-  function askJeeves(q) {
+  function askJeeves(q, isReply) {
     q = q.trim() || 'Who is a good boy?';
-    jvQ.textContent = q;
+    if (!isReply) { // fresh question = fresh conversation
+      jvHistory = [];
+      jvThread.textContent = '';
+    }
     jvResults.classList.add('show');
     clearInterval(jvThinkTimer);
     clearTimeout(jvTypeTimer);
-    jvA.textContent = '🐾 Jeeeves is fetching your answer 🦴';
+    var ex = newExchange(q);
+    ex.a.textContent = '🐾 Jeeeves is fetching your answer 🦴';
     // ask the real AI; fall back to the pre-recorded answers if it fails
     var answer = null;
     fetch('/api/jeeves', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ q: q })
+      body: JSON.stringify({ q: q, history: jvHistory })
     }).then(function (r) { return r.json(); }).then(function (d) {
       answer = (d && d.a) || jeevesAnswer(q);
     }).catch(function () {
@@ -1471,18 +1558,27 @@
     jvThinkTimer = setInterval(function () {
       dots++;
       if (dots < 3 || answer === null) {
-        if (dots % 8 === 0) jvA.textContent = '🐾 Jeeeves is digging deeper 🦴';
-        else jvA.textContent += ' 🦴';
+        if (dots % 8 === 0) ex.a.textContent = '🐾 Jeeeves is digging deeper 🦴';
+        else ex.a.textContent += ' 🦴';
         return;
       }
       clearInterval(jvThinkTimer);
-      typeAnswer(answer);
+      jvHistory.push({ q: q, a: answer });
+      if (jvHistory.length > 4) jvHistory.shift();
+      typeAnswer(answer, ex);
     }, 420);
-    jvResults.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+    ex.asked.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
   }
   document.getElementById('jeeves-form').addEventListener('submit', function (e) {
     e.preventDefault();
     askJeeves(jvInput.value);
+  });
+  var jvReply = document.getElementById('jeeves-r');
+  document.getElementById('jeeves-reply').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!jvReply.value.trim()) return;
+    askJeeves(jvReply.value, true);
+    jvReply.value = '';
   });
   var jvSug = document.getElementById('jeeves-suggestions');
   JEEVES_SUGGESTIONS.forEach(function (q) {
