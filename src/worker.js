@@ -163,15 +163,17 @@ async function handleApi(request, env, path, role) {
       const { results } = await env.DB
         .prepare('SELECT id, name, max_party, created_at FROM guestlist ORDER BY name COLLATE NOCASE')
         .all();
-      // pair each invite with its RSVP (latest one wins) so the list shows who has replied
-      const { results: rr } = await env.DB.prepare('SELECT name, attending, party FROM rsvps ORDER BY id').all();
+      // pair each invite with its full RSVP (latest one wins); RSVPs that match
+      // no invite are returned separately as strays (the "mystery guests")
+      const { results: rr } = await env.DB
+        .prepare('SELECT id, name, email, attending, party, meal, song, boogie, msg, created_at FROM rsvps ORDER BY id')
+        .all();
       const replied = new Map();
       for (const r of rr) replied.set(normName(r.name), r);
+      const listed = new Set(results.map((g) => normName(g.name)));
       return json({
-        guests: results.map((g) => {
-          const r = replied.get(normName(g.name));
-          return { ...g, rsvpd: r ? (r.attending ? 'yes' : 'no') : null, rsvp_party: r ? r.party : null };
-        }),
+        guests: results.map((g) => ({ ...g, rsvp: replied.get(normName(g.name)) || null })),
+        strays: rr.filter((r) => !listed.has(normName(r.name))),
       });
     }
 

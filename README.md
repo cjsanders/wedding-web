@@ -64,11 +64,13 @@ npx wrangler d1 execute wedding --remote --command "DELETE FROM guestbook WHERE 
 - Guest list ("The Velvet Rope", in the admin panel): while the `guestlist`
   table is empty anyone with the password can RSVP; once it has names, the
   RSVP form only accepts listed names (matched case/punctuation-insensitively)
-  with a party size up to that invite's max. Manage it in the control panel —
-  single add, bulk paste (`Name, max` per line), inline max edits, two-click
-  cuts — or via `/api/admin/guestlist` (GET/POST) and
-  `/api/admin/guestlist/<id>` (PUT max, DELETE). To fix a typo'd name, cut the
-  entry and re-add it.
+  with a party size up to that invite's max. The control panel shows one merged
+  table — each invite row carries its RSVP (party, meal, song, message; green =
+  yes, pink = declined) — plus a "mystery guests" list of RSVPs matching no
+  invite, each with a one-click "list 'em" to add them. Manage via single add,
+  bulk paste (`Name, max` per line), inline max edits, two-click cuts — or via
+  `/api/admin/guestlist` (GET/POST) and `/api/admin/guestlist/<id>` (PUT max,
+  DELETE). To fix a typo'd name, cut the entry and re-add it.
 - Ask Jeeeves is real AI: `/api/jeeves` calls Claude (`JEEVES_MODEL` in
   `src/worker.js`) with a persona + site-canon fact sheet (`JEEVES_SYSTEM`).
   If the wedding details change, update that fact sheet too. Without an
