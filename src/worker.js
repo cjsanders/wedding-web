@@ -25,6 +25,16 @@ export default {
       return handleLogin(request, env, url);
     }
 
+    if (path === '/api/logout' && request.method === 'POST') {
+      return new Response(null, {
+        status: 303,
+        headers: {
+          Location: new URL('/', url).toString(),
+          'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
+        },
+      });
+    }
+
     const role = await getRole(request, env);
 
     if (path.startsWith('/api/')) {

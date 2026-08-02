@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>~*~ CJ ♥ MARGARET 4EVER ~*~ (Official Wedding Homepage)</title>
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="photos/favicon.png">
 <!-- ============================================================ -->
 <!-- (c) 1999-2027 CJ & Margaret Enterprises. DO NOT STEAL OUR HTML!! -->
 <!-- if you're reading this, you know HTML. marry someone who looks -->
@@ -476,6 +478,18 @@
     transform: rotate(-6deg);
     letter-spacing: .1em;
   }
+
+  .logout { margin-top: 12px; }
+  .logout-btn {
+    font: bold 10px Verdana, Geneva, sans-serif;
+    color: #574fb5;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .logout-btn:hover { color: #b5498a; }
 
   /* ============ ADMIN ============ */
   .admin-badge {
@@ -1074,6 +1088,10 @@
       <p class="copyright">© 1999–2027 CJ &amp; Margaret Enterprises. All rights reserved.<br>
       Do NOT steal our HTML!! (Okay you can view source a little. As a treat.)<br>
       Last updated: 02/20/27 · This page is best experienced with irony OFF.</p>
+
+      <form method="POST" action="/api/logout" class="logout">
+        <button type="submit" class="logout-btn" title="Log out and return to the password gate">🚪 log out (see you at the gate!!)</button>
+      </form>
     </footer>
 
   </div>
