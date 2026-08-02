@@ -105,7 +105,7 @@ THE FACTS (this is site canon — never contradict it, never invent new logistic
 - The couple: CJ (groom) and Margaret (bride). They met in Joshua Tree in 2018 as friends, rekindled the friendship in 2023, locked it in on Margaret's Euro trip in 2024, adopted you in 2025, got engaged in 2026, and are getting married in 2027.
 - When: Saturday, March 27, 2027. Ceremony 4:00 PM sharp (short and sweet), cocktail hour right after in the canyon's golden light, dinner 6:00 PM, music/dancing from 8:30 PM, curfew at midnight (canyon noise rules; the raccoons enforce them), then an after-party at one of the private houses on property. You must not bark during the vows (allegedly).
 - Where: The Starlite Ballroom in Topanga, California. Directions: PCH north, right at Topanga Canyon Blvd, up until you hear wind chimes. Fly into LAX (~40 min) or Burbank. Full details on the Getting There page.
-- RSVP: due February 27, 2027, via the RSVP page on this very website. Guests who forget will be telephoned by CJ's mother. This is a threat. You cannot protect them. You are small.
+- RSVP: due February 27, 2027, via the RSVP page on this very website. The form checks names against the guest list — guests should type their name exactly as it appears on their invitation (the bouncer is thorough). If it will not accept them, they should contact CJ & Margaret. Guests who forget to RSVP will be telephoned by CJ's mother. This is a threat. You cannot protect them. You are small.
 - Dress code: "Canyon Formal / 2 Cool 4 School" — loud colors, flowy layers, a jacket for the chilly canyon night. Guests who match the decor (hot pink + gold) win a prize you once tried to eat.
 - Lodging: room block at the Starlite Motor Lodge on PCH (say "CJ & MARGARET 4EVER" for the group rate); the Pink Flamingo Inn in Malibu is extremely pink; camping possible in Topanga State Park but cold.
 - Food: dinner is chicken, steak, or vegetarian (chosen at RSVP). There is cake you are "not allowed" to have. At MIDNIGHT the In-N-Out truck arrives — this is not a drill; you have negotiated one (1) plain patty for exemplary butler service.
@@ -158,6 +158,71 @@ async function handleApi(request, env, path, role) {
       return json({ rsvps: results });
     }
 
+    if (path === '/api/admin/guestlist' && request.method === 'GET') {
+      if (role !== 'admin') return json({ error: 'management only!!' }, 403);
+      const { results } = await env.DB
+        .prepare('SELECT id, name, max_party, created_at FROM guestlist ORDER BY name COLLATE NOCASE')
+        .all();
+      // pair each invite with its RSVP (latest one wins) so the list shows who has replied
+      const { results: rr } = await env.DB.prepare('SELECT name, attending, party FROM rsvps ORDER BY id').all();
+      const replied = new Map();
+      for (const r of rr) replied.set(normName(r.name), r);
+      return json({
+        guests: results.map((g) => {
+          const r = replied.get(normName(g.name));
+          return { ...g, rsvpd: r ? (r.attending ? 'yes' : 'no') : null, rsvp_party: r ? r.party : null };
+        }),
+      });
+    }
+
+    if (path === '/api/admin/guestlist' && request.method === 'POST') {
+      if (role !== 'admin') return json({ error: 'management only!!' }, 403);
+      const b = await request.json().catch(() => null);
+      // accepts {name, max} for one guest, or {bulk: "Name, 4\nOther Name\n…"} for many
+      const wanted = [];
+      if (b && typeof b.bulk === 'string') {
+        for (const line of b.bulk.split('\n')) {
+          const t = line.trim();
+          if (!t) continue;
+          const m = t.match(/^(.*?)[,;\t]\s*(\d{1,2})\s*$/);
+          wanted.push(m ? { name: clip(m[1], 60), max: Number(m[2]) } : { name: clip(t, 60), max: 2 });
+        }
+      } else if (b && b.name) {
+        wanted.push({ name: clip(b.name, 60), max: parseInt(b.max, 10) });
+      }
+      if (!wanted.length) return json({ error: 'no names!!' }, 400);
+      const { results: existing } = await env.DB.prepare('SELECT name FROM guestlist').all();
+      const seen = new Set(existing.map((g) => normName(g.name)));
+      const added = [];
+      const skipped = [];
+      for (const w of wanted) {
+        const key = normName(w.name);
+        if (!key || seen.has(key)) { skipped.push(w.name); continue; }
+        seen.add(key);
+        const max = Math.min(Math.max(w.max || 2, 1), 20);
+        const row = await env.DB
+          .prepare('INSERT INTO guestlist (name, max_party) VALUES (?, ?) RETURNING id, name, max_party')
+          .bind(w.name, max)
+          .first();
+        added.push(row);
+      }
+      return json({ ok: true, added, skipped });
+    }
+
+    const glOne = path.match(/^\/api\/admin\/guestlist\/(\d+)$/);
+    if (glOne && request.method === 'PUT') {
+      if (role !== 'admin') return json({ error: 'management only!!' }, 403);
+      const b = await request.json().catch(() => null);
+      const max = Math.min(Math.max(parseInt(b && b.max, 10) || 0, 1), 20);
+      await env.DB.prepare('UPDATE guestlist SET max_party = ? WHERE id = ?').bind(max, Number(glOne[1])).run();
+      return json({ ok: true, max });
+    }
+    if (glOne && request.method === 'DELETE') {
+      if (role !== 'admin') return json({ error: 'management only!!' }, 403);
+      await env.DB.prepare('DELETE FROM guestlist WHERE id = ?').bind(Number(glOne[1])).run();
+      return json({ ok: true });
+    }
+
     const gbDel = path.match(/^\/api\/admin\/guestbook\/(\d+)$/);
     if (gbDel && request.method === 'DELETE') {
       if (role !== 'admin') return json({ error: 'management only!!' }, 403);
@@ -186,6 +251,25 @@ async function handleApi(request, env, path, role) {
     if (path === '/api/rsvp' && request.method === 'POST') {
       const b = await request.json().catch(() => null);
       if (!b || b.fax) return json({ ok: true });
+      // the velvet rope: if the guest list has names on it, you must be one of them
+      const { results: rope } = await env.DB.prepare('SELECT name, max_party FROM guestlist').all();
+      if (rope.length) {
+        const invite = rope.find((g) => normName(g.name) === normName(b.name));
+        if (!invite) {
+          return json({
+            error: "the bouncer squints at the clipboard… can't find that name!! " +
+              'type it exactly like it appears on your invitation (or holler at CJ & Margaret)',
+          }, 403);
+        }
+        const partyN = parseInt(b.party, 10) || 1;
+        if (b.attending && partyN > invite.max_party) {
+          return json({
+            error: 'whoa there!! this invite covers ' + invite.max_party +
+              ' human' + (invite.max_party === 1 ? '' : 's') + ' max — kindly shrink your party',
+            max: invite.max_party,
+          }, 403);
+        }
+      }
       await env.DB
         .prepare('INSERT INTO rsvps (name, email, attending, party, meal, song, boogie, msg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
         .bind(
@@ -256,6 +340,11 @@ async function handleApi(request, env, path, role) {
 
 function clip(v, max) {
   return typeof v === 'string' ? v.trim().slice(0, max) : '';
+}
+
+// "  Aunt  CAROL O'Brien!! " and "aunt carol obrien" are the same person
+function normName(s) {
+  return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
 function json(data, status = 200) {

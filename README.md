@@ -10,7 +10,7 @@ The official GeoCities-style wedding homepage, hosted on Cloudflare Workers.
   (Roland-licensed samples; grey-area provenance, swap in e.g. TimGM6mb.sf2 if that
   ever bothers us). All ~3.8 MB of synth+instruments lazy-load on first play only.
 - `src/worker.js` — password gate + `/api/*` endpoints (RSVP, guestbook, hit counter)
-- `schema.sql` — D1 schema (rsvps, guestbook, counters)
+- `schema.sql` — D1 schema (rsvps, guestbook, guestlist, counters)
 
 The whole site is password-protected: guests get the shared password from their
 invitation, type it once at the Y2K gate page, and a signed cookie keeps them in
@@ -61,6 +61,14 @@ npx wrangler d1 execute wedding --remote --command "DELETE FROM guestbook WHERE 
 - Admin: type `ADMIN_PASSWORD` at the same password gate to get an admin
   cookie instead of a guest one (an "ADMIN MODE" badge confirms it).
   `GET /api/me` returns your role; admin-only API routes check it.
+- Guest list ("The Velvet Rope", in the admin panel): while the `guestlist`
+  table is empty anyone with the password can RSVP; once it has names, the
+  RSVP form only accepts listed names (matched case/punctuation-insensitively)
+  with a party size up to that invite's max. Manage it in the control panel —
+  single add, bulk paste (`Name, max` per line), inline max edits, two-click
+  cuts — or via `/api/admin/guestlist` (GET/POST) and
+  `/api/admin/guestlist/<id>` (PUT max, DELETE). To fix a typo'd name, cut the
+  entry and re-add it.
 - Ask Jeeeves is real AI: `/api/jeeves` calls Claude (`JEEVES_MODEL` in
   `src/worker.js`) with a persona + site-canon fact sheet (`JEEVES_SYSTEM`).
   If the wedding details change, update that fact sheet too. Without an

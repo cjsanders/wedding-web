@@ -24,6 +24,15 @@ CREATE TABLE IF NOT EXISTS guestbook (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- the velvet rope: who may RSVP, and how many humans their invite covers.
+-- while this table is empty the rope is down (anyone with the password can RSVP).
+CREATE TABLE IF NOT EXISTS guestlist (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  name       TEXT NOT NULL,              -- matched against the RSVP name (loosely: case/punctuation-insensitive)
+  max_party  INTEGER NOT NULL DEFAULT 2, -- max humans for this invite
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS counters (
   name  TEXT PRIMARY KEY,
   value INTEGER NOT NULL

@@ -459,6 +459,16 @@
   .confirmbox.show { display: block; }
   .confirmbox .party { font-size: 2rem; }
 
+  .bouncebox {
+    display: none;
+    border: 4px double #cc0000;
+    background: #fff0f0;
+    padding: 16px;
+    text-align: center;
+    margin: 14px 0;
+  }
+  .bouncebox.show { display: block; }
+
   /* ============ PHOTOS (56k) ============ */
   .photogrid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 14px 0; }
   .brokenimg {
@@ -615,6 +625,20 @@
     text-transform: uppercase;
   }
   .adm-del.armed { background: #7a0000; animation: blink 1s steps(1) infinite; }
+  #adm-gl { overflow-x: auto; }
+  .gl-add {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  .gl-add #gl-name { flex: 1 1 220px; max-width: 320px; }
+  .gl-add input[type="number"], .gl-max-in { width: 58px; }
+  .gl-saved { outline: 3px solid #1e9e00; }
+  .gl-bulk { margin: 12px 0; }
+  .gl-bulk summary { cursor: pointer; font-weight: bold; }
 
   /* honeypot field — humans never see it, bots can't resist it */
   .hpot { position: absolute; left: -9999px; top: -9999px; }
@@ -1114,10 +1138,15 @@
         <span class="small">Your RSVP has been beamed to our inbox. You may now boogie freely.</span>
       </div>
 
+      <div class="bouncebox" id="rsvp-bounce" role="alert">
+        <b>🚧 HOLD UP!! <span class="blink">✋</span></b><br>
+        <span id="rsvp-bounce-msg"></span>
+      </div>
+
       <form id="rsvp-form">
         <fieldset>
           <legend>WHO ARE YOU??</legend>
-          <div class="formrow"><label for="r-name">Your name:</label><br><input type="text" id="r-name" class="wide" required maxlength="60"></div>
+          <div class="formrow"><label for="r-name">Your name:</label><br><input type="text" id="r-name" class="wide" required maxlength="60"><br><span class="small">(psst — type it like it appears on your invitation, so the bouncer can find you on the list!!)</span></div>
           <div class="formrow"><label for="r-email">Your e-mail (for the confirmation e-card):</label><br><input type="email" id="r-email" class="wide" maxlength="80"></div>
         </fieldset>
 
@@ -1230,6 +1259,24 @@
       <h3>💌 RSVP-O-MATIC</h3>
       <div class="whitebox center" id="adm-stats">loading the numbers…</div>
       <div id="adm-rsvps"></div>
+
+      <h3>📋 The Velvet Rope (guest list)</h3>
+      <p class="center small">Only names on this list may RSVP, and only up to their max humans.<br>
+        <b>Empty list = rope down</b> (anyone with the password can RSVP) — so fill it in before the invitations go out!!</p>
+      <div class="whitebox center" id="adm-gl-stats">loading the list…</div>
+      <form id="gl-add" class="gl-add">
+        <input type="text" id="gl-name" maxlength="60" placeholder="Guest name (as printed on the invitation)" required>
+        <label class="small" for="gl-max">max&nbsp;humans</label>
+        <input type="number" id="gl-max" min="1" max="20" value="2">
+        <button type="submit" class="btn">➕ ADD</button>
+      </form>
+      <div id="adm-gl"></div>
+      <details class="gl-bulk">
+        <summary>📠 bulk import (paste yer spreadsheet)</summary>
+        <p class="small">One guest per line: <code>Name, max</code> — the max is optional (defaults to 2). Names already on the list are skipped.</p>
+        <textarea id="gl-bulk-text" class="wide" rows="6" placeholder="Aunt Carol, 1&#10;The Sanders Family, 4&#10;Brenda the Vet Tech"></textarea>
+        <p><button type="button" class="btn" id="gl-bulk-go">📥 IMPORT THE MASSES</button> <span class="small" id="gl-bulk-status"></span></p>
+      </details>
 
       <h3>📖 Guestbook Patrol</h3>
       <p class="center small">Delete spam, duplicates, or anything Aunt Carol regrets. Buttons ask twice — we believe in second chances.</p>
@@ -1368,10 +1415,132 @@
     fetch('/api/admin/rsvps').then(function (r) { return r.json(); }).then(function (d) {
       if (d && d.rsvps) renderAdminRsvps(d.rsvps);
     }).catch(function () {});
+    fetch('/api/admin/guestlist').then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.guests) renderAdminGl(d.guests);
+    }).catch(function () {});
     fetch('/api/guestbook').then(function (r) { return r.json(); }).then(function (d) {
       if (d && d.entries) renderAdminGb(d.entries);
     }).catch(function () {});
   }
+  function renderAdminGl(guests) {
+    var seats = 0, yes = 0, no = 0;
+    guests.forEach(function (g) {
+      seats += g.max_party;
+      if (g.rsvpd === 'yes') yes++;
+      else if (g.rsvpd === 'no') no++;
+    });
+    document.getElementById('adm-gl-stats').textContent = guests.length === 0
+      ? '🚫 The rope is DOWN — anyone with the password can RSVP. Add names to raise it!!'
+      : '📋 ' + guests.length + ' invites · 💺 ' + seats + ' possible humans · 🎉 ' + yes +
+        ' said yes · 😢 ' + no + ' declined · 🦗 ' + (guests.length - yes - no) + ' crickets';
+    var wrap = document.getElementById('adm-gl');
+    wrap.textContent = '';
+    if (!guests.length) return;
+    var table = document.createElement('table');
+    table.className = 'datagrid';
+    var head = document.createElement('tr');
+    ["WHO'S IN", 'MAX', 'RSVP??', ''].forEach(function (h) {
+      var th = document.createElement('th');
+      th.textContent = h;
+      head.appendChild(th);
+    });
+    table.appendChild(head);
+    guests.forEach(function (g) {
+      var row = document.createElement('tr');
+      var tdName = document.createElement('td');
+      tdName.textContent = g.name;
+      var tdMax = document.createElement('td');
+      var maxIn = document.createElement('input');
+      maxIn.type = 'number';
+      maxIn.min = '1';
+      maxIn.max = '20';
+      maxIn.value = g.max_party;
+      maxIn.className = 'gl-max-in';
+      maxIn.setAttribute('aria-label', 'Max party for ' + g.name);
+      maxIn.addEventListener('change', function () {
+        fetch('/api/admin/guestlist/' + g.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ max: maxIn.value })
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.ok) {
+            maxIn.value = d.max; // server may clamp
+            maxIn.classList.add('gl-saved');
+            setTimeout(function () { maxIn.classList.remove('gl-saved'); }, 900);
+          }
+        }).catch(function () {});
+      });
+      tdMax.appendChild(maxIn);
+      var tdR = document.createElement('td');
+      tdR.textContent = g.rsvpd === 'yes' ? '✔ YES (' + (parseInt(g.rsvp_party, 10) || '?') + ')'
+        : g.rsvpd === 'no' ? '✖ declined'
+        : '… crickets';
+      var tdDel = document.createElement('td');
+      var del = document.createElement('button');
+      del.className = 'adm-del';
+      del.textContent = '🚫 cut';
+      var armTimer = null;
+      del.addEventListener('click', function () {
+        if (!del.classList.contains('armed')) { // first click arms, second click fires
+          del.classList.add('armed');
+          del.textContent = 'REALLY??';
+          armTimer = setTimeout(function () {
+            del.classList.remove('armed');
+            del.textContent = '🚫 cut';
+          }, 3000);
+          return;
+        }
+        clearTimeout(armTimer);
+        del.disabled = true;
+        fetch('/api/admin/guestlist/' + g.id, { method: 'DELETE' })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (d && d.ok) loadAdmin(); else del.disabled = false; })
+          .catch(function () { del.disabled = false; });
+      });
+      tdDel.appendChild(del);
+      row.appendChild(tdName);
+      row.appendChild(tdMax);
+      row.appendChild(tdR);
+      row.appendChild(tdDel);
+      table.appendChild(row);
+    });
+    wrap.appendChild(table);
+  }
+  document.getElementById('gl-add').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('gl-name').value.trim();
+    if (!name) return;
+    fetch('/api/admin/guestlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, max: document.getElementById('gl-max').value })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ok) {
+        document.getElementById('gl-name').value = '';
+        loadAdmin();
+      }
+    }).catch(function () {});
+  });
+  document.getElementById('gl-bulk-go').addEventListener('click', function () {
+    var text = document.getElementById('gl-bulk-text').value;
+    var status = document.getElementById('gl-bulk-status');
+    if (!text.trim()) { status.textContent = '(paste some names first!!)'; return; }
+    status.textContent = 'importing…';
+    fetch('/api/admin/guestlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bulk: text })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ok) {
+        status.textContent = '✓ added ' + d.added.length +
+          (d.skipped.length ? ' · skipped ' + d.skipped.length + ' (already listed)' : '');
+        document.getElementById('gl-bulk-text').value = '';
+        loadAdmin();
+      } else {
+        status.textContent = '✖ import jammed — ' + ((d && d.error) || 'try again');
+      }
+    }).catch(function () { status.textContent = '✖ import jammed — try again'; });
+  });
   function renderAdminRsvps(rows) {
     var yes = 0, no = 0, humans = 0, boogie = 0, meals = { chicken: 0, steak: 0, veggie: 0 };
     rows.forEach(function (r) {
@@ -1748,6 +1917,7 @@
     };
     function celebrate(count) {
       var box = document.getElementById('rsvp-confirm');
+      document.getElementById('rsvp-bounce').classList.remove('show');
       document.getElementById('rsvp-confirm-msg').textContent = attending
         ? 'WOOHOO!! See you there, ' + name + '!!' + (count ? ' You are party person #' + count + '!!' : '')
         : 'Aww, ' + name + '. You will be missed!! (CJ’s mom may still call.)';
@@ -1755,12 +1925,23 @@
       form.reset();
       box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
     }
+    function bounce(msg) { // the velvet rope said no — show why, keep the form filled
+      var box = document.getElementById('rsvp-bounce');
+      document.getElementById('rsvp-confirm').classList.remove('show');
+      document.getElementById('rsvp-bounce-msg').textContent =
+        msg || 'the RSVP machine jammed!! give it another go in a minute';
+      box.classList.add('show');
+      box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    }
     fetch('/api/rsvp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    }).then(function (r) { return r.json(); }).then(function (d) {
-      celebrate(d && d.count);
+    }).then(function (r) {
+      return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+    }).then(function (res) {
+      if (res.ok && res.d && res.d.ok) { celebrate(res.d.count); return; }
+      bounce(res.d && res.d.error);
     }).catch(function () {
       // offline: stash locally so nothing is lost, confirm without a number
       var rsvps = lsGet('cjm_rsvps', []);
