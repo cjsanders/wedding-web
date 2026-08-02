@@ -474,6 +474,9 @@
     letter-spacing: .1em;
   }
 
+  /* honeypot field — humans never see it, bots can't resist it */
+  .hpot { position: absolute; left: -9999px; top: -9999px; }
+
   /* ============ GUESTBOOK ============ */
   .gbentry {
     background: #fff;
@@ -906,8 +909,9 @@
           <div class="formrow"><label for="r-msg">Message for the happy couple:</label><br><textarea id="r-msg" class="wide" rows="3" maxlength="400"></textarea></div>
         </fieldset>
 
+        <div class="hpot" aria-hidden="true"><label for="r-fax">Fax number (leave blank):</label><input type="text" id="r-fax" tabindex="-1" autocomplete="off"></div>
         <p class="center"><input type="submit" value="💌 SEND IT!!"></p>
-        <p class="center small">(Demo form — your RSVP saves to this browser only. No data leaves your computer!!)</p>
+        <p class="center small">(Your RSVP travels the INFORMATION SUPERHIGHWAY straight to CJ + Margaret's official database!!)</p>
       </form>
     </section>
 
@@ -923,7 +927,8 @@
           <div class="formrow"><label for="g-from">Where are you from?</label><br><input type="text" id="g-from" class="wide" maxlength="40" placeholder="e.g. Tucson, AZ"></div>
           <div class="formrow"><label for="g-hp">Your homepage (optional):</label><br><input type="text" id="g-hp" class="wide" maxlength="80" placeholder="http://geocities.com/…"></div>
           <div class="formrow"><label for="g-msg">Message:</label><br><textarea id="g-msg" class="wide" rows="3" required maxlength="300"></textarea></div>
-          <p><button type="submit" class="btn">✍️ SIGN THE GUESTBOOK</button> <span class="small">(saves to this browser only)</span></p>
+          <div class="hpot" aria-hidden="true"><label for="g-fax">Fax number (leave blank):</label><input type="text" id="g-fax" tabindex="-1" autocomplete="off"></div>
+          <p><button type="submit" class="btn">✍️ SIGN THE GUESTBOOK</button> <span class="small">(published live for all guests to see!!)</span></p>
         </fieldset>
       </form>
 
@@ -1054,10 +1059,15 @@
   window.addEventListener('hashchange', route);
   route();
 
-  /* ---------- hit counter ---------- */
-  var hits = lsGet('cjm_hits', 1336) + 1;
-  lsSet('cjm_hits', hits);
-  document.getElementById('hitcounter').textContent = String(hits).padStart(7, '0');
+  /* ---------- hit counter (real!! server-side!!) ---------- */
+  var hitEl = document.getElementById('hitcounter');
+  hitEl.textContent = String(lsGet('cjm_hits', 1337)).padStart(7, '0');
+  fetch('/api/visit', { method: 'POST' }).then(function (r) { return r.json(); }).then(function (d) {
+    if (d && typeof d.hits === 'number') {
+      lsSet('cjm_hits', d.hits);
+      hitEl.textContent = String(d.hits).padStart(7, '0');
+    }
+  }).catch(function () { /* offline: last known number stays up */ });
 
   /* ---------- countdown ---------- */
   var TARGET = new Date('2027-03-27T16:00:00-07:00').getTime();
@@ -1238,10 +1248,10 @@
   /* ---------- RSVP form ---------- */
   document.getElementById('rsvp-form').addEventListener('submit', function (e) {
     e.preventDefault();
+    var form = this;
     var name = document.getElementById('r-name').value.trim() || 'Mystery Guest';
     var attending = document.querySelector('input[name="r-attend"]:checked').value === 'yes';
-    var rsvps = lsGet('cjm_rsvps', []);
-    rsvps.push({
+    var payload = {
       name: name,
       email: document.getElementById('r-email').value.trim(),
       attending: attending,
@@ -1250,16 +1260,30 @@
       song: document.getElementById('r-song').value.trim(),
       boogie: document.getElementById('r-boogie').checked,
       msg: document.getElementById('r-msg').value.trim(),
-      at: new Date().toISOString()
+      fax: document.getElementById('r-fax').value
+    };
+    function celebrate(count) {
+      var box = document.getElementById('rsvp-confirm');
+      document.getElementById('rsvp-confirm-msg').textContent = attending
+        ? 'WOOHOO!! See you there, ' + name + '!!' + (count ? ' You are party person #' + count + '!!' : '')
+        : 'Aww, ' + name + '. You will be missed!! (CJ’s mom may still call.)';
+      box.classList.add('show');
+      form.reset();
+      box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    }
+    fetch('/api/rsvp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      celebrate(d && d.count);
+    }).catch(function () {
+      // offline: stash locally so nothing is lost, confirm without a number
+      var rsvps = lsGet('cjm_rsvps', []);
+      rsvps.push(payload);
+      lsSet('cjm_rsvps', rsvps);
+      celebrate(0);
     });
-    lsSet('cjm_rsvps', rsvps);
-    var box = document.getElementById('rsvp-confirm');
-    document.getElementById('rsvp-confirm-msg').textContent = attending
-      ? 'WOOHOO!! See you there, ' + name + '!! You are party person #' + rsvps.length + '!!'
-      : 'Aww, ' + name + '. You will be missed!! (CJ’s mom may still call.)';
-    box.classList.add('show');
-    this.reset();
-    box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
   });
 
   /* ---------- guestbook ---------- */
@@ -1270,17 +1294,21 @@
     { name: 'Webmaster_Greg_1999', from: 'the Information Superhighway', hp: "Greg's HTML Zone", msg: 'Nice use of tables. The marquee is a bold choice. Respect.', date: '01/22/27' },
     { name: 'CJ & Margaret', from: 'Topanga, CA', hp: 'you are here!!', msg: 'Thanks for stopping by!! Bookmark us (Ctrl+D)!! See you in March!!', date: '02/01/27' }
   ];
-  function renderGuestbook() {
+  function gbDate(at) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(at || '');
+    return m ? m[2] + '/' + m[3] + '/' + m[1].slice(2) : '';
+  }
+  function renderGuestbook(list) {
     var wrap = document.getElementById('gb-entries');
     wrap.textContent = '';
-    var all = SEED_ENTRIES.concat(lsGet('cjm_guestbook', []));
+    var all = SEED_ENTRIES.concat(list);
     for (var i = all.length - 1; i >= 0; i--) {
       var en = all[i];
       var div = document.createElement('div');
       div.className = 'gbentry';
       var meta = document.createElement('div');
       meta.className = 'gbmeta';
-      meta.textContent = '✏️ ' + en.name + (en.from ? ' · from ' + en.from : '') + ' · ' + en.date;
+      meta.textContent = '✏️ ' + en.name + (en.from ? ' · from ' + en.from : '') + ' · ' + (en.date || gbDate(en.at));
       if (en.hp) {
         var hp = document.createElement('span');
         hp.className = 'hp';
@@ -1294,22 +1322,40 @@
       wrap.appendChild(div);
     }
   }
+  var gbEntries = lsGet('cjm_guestbook', []); // offline fallback until the server answers
+  renderGuestbook(gbEntries);
+  fetch('/api/guestbook').then(function (r) { return r.json(); }).then(function (d) {
+    if (d && d.entries) { gbEntries = d.entries; renderGuestbook(gbEntries); }
+  }).catch(function () {});
   document.getElementById('gb-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    var d = new Date();
-    var entries = lsGet('cjm_guestbook', []);
-    entries.push({
+    var form = this;
+    var entry = {
       name: document.getElementById('g-name').value.trim() || 'Anonymous Well-Wisher',
       from: document.getElementById('g-from').value.trim(),
       hp: document.getElementById('g-hp').value.trim(),
       msg: document.getElementById('g-msg').value.trim(),
-      date: pad(d.getMonth() + 1, 2) + '/' + pad(d.getDate(), 2) + '/' + String(d.getFullYear()).slice(2)
+      fax: document.getElementById('g-fax').value
+    };
+    function signed(saved) {
+      gbEntries.push(saved);
+      form.reset();
+      renderGuestbook(gbEntries);
+    }
+    fetch('/api/guestbook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      signed(d && d.entry ? d.entry : entry);
+    }).catch(function () {
+      // offline: keep it locally so the words aren't lost
+      var d = new Date();
+      entry.date = pad(d.getMonth() + 1, 2) + '/' + pad(d.getDate(), 2) + '/' + String(d.getFullYear()).slice(2);
+      lsSet('cjm_guestbook', gbEntries.concat([entry]));
+      signed(entry);
     });
-    lsSet('cjm_guestbook', entries);
-    this.reset();
-    renderGuestbook();
   });
-  renderGuestbook();
 
   /* ---------- ASK JEEEVES (pre-recorded answers — real AI coming soon!!) ---------- */
   var JEEVES_QA = [
