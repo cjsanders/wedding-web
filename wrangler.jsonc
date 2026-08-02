@@ -1,21 +1,24 @@
 {
-  "name": "cj-margaret-wedding",
-  "main": "src/worker.js",
-  "compatibility_date": "2026-07-01",
-  // Static site lives in public/; run_worker_first lets the worker
-  // password-gate every request before assets are served.
-  "assets": {
-    "directory": "./public",
-    "binding": "ASSETS",
-    "run_worker_first": true
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "wedding",
-      // Replace after running: npx wrangler d1 create wedding
-      "database_id": "REPLACE_ME_AFTER_wrangler_d1_create"
-    }
-  ],
-  "observability": { "enabled": true }
+	"name": "cj-margaret-wedding",
+	"main": "src/worker.js",
+	"compatibility_date": "2026-07-01",
+	// Static site lives in public/; run_worker_first lets the worker
+	// password-gate every request before assets are served.
+	"assets": {
+		"directory": "./public",
+		"binding": "ASSETS",
+		"run_worker_first": true
+	},
+	"d1_databases": [
+		{
+			// binding must stay "DB" — src/worker.js reads env.DB
+			"binding": "DB",
+			"database_name": "wedding",
+			"database_id": "68f6a787-550a-4c0e-9b92-6de7e29b8ffb",
+			"remote": true
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
 }
