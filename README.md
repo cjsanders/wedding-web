@@ -67,7 +67,8 @@ npx wrangler d1 execute wedding --remote --command "DELETE FROM guestbook WHERE 
   with a party size up to that invite's max. The control panel shows one merged
   table — each invite row carries its RSVP (party, meal, song, message; green =
   yes, pink = declined) — plus a "mystery guests" list of RSVPs matching no
-  invite, each with a one-click "list 'em" to add them. Manage via single add,
+  invite, each with a one-click "list 'em" to add them or a two-click "zap" to
+  delete the RSVP (`DELETE /api/admin/rsvps/<id>`). Manage via single add,
   bulk paste (`Name, max` per line), inline max edits, two-click cuts — or via
   `/api/admin/guestlist` (GET/POST) and `/api/admin/guestlist/<id>` (PUT max,
   DELETE). To fix a typo'd name, cut the entry and re-add it.

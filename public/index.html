@@ -630,6 +630,7 @@
   #adm-gl td .small, #adm-strays td .small { font-weight: normal; }
   .strays-head { margin-top: 18px; font-weight: bold; }
   .gl-listem { font-size: 11px; padding: 2px 8px; white-space: nowrap; }
+  .gl-zap { display: block; margin: 6px auto 0; }
   .gl-add {
     display: flex;
     flex-wrap: wrap;
@@ -1588,6 +1589,29 @@
           .catch(function () { addBtn.disabled = false; });
       });
       tdAdd.appendChild(addBtn);
+      var zap = document.createElement('button');
+      zap.className = 'adm-del gl-zap';
+      zap.textContent = '🗑 zap';
+      zap.title = 'Delete this RSVP entirely';
+      var zapTimer = null;
+      zap.addEventListener('click', function () {
+        if (!zap.classList.contains('armed')) { // first click arms, second click fires
+          zap.classList.add('armed');
+          zap.textContent = 'REALLY??';
+          zapTimer = setTimeout(function () {
+            zap.classList.remove('armed');
+            zap.textContent = '🗑 zap';
+          }, 3000);
+          return;
+        }
+        clearTimeout(zapTimer);
+        zap.disabled = true;
+        fetch('/api/admin/rsvps/' + r.id, { method: 'DELETE' })
+          .then(function (x) { return x.json(); })
+          .then(function (d) { if (d && d.ok) loadAdmin(); else zap.disabled = false; })
+          .catch(function () { zap.disabled = false; });
+      });
+      tdAdd.appendChild(zap);
       var cells = [
         (r.created_at || '').slice(0, 10),
         null, // tdWho below

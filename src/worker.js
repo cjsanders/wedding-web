@@ -232,6 +232,13 @@ async function handleApi(request, env, path, role) {
       return json({ ok: true });
     }
 
+    const rsvpDel = path.match(/^\/api\/admin\/rsvps\/(\d+)$/);
+    if (rsvpDel && request.method === 'DELETE') {
+      if (role !== 'admin') return json({ error: 'management only!!' }, 403);
+      await env.DB.prepare('DELETE FROM rsvps WHERE id = ?').bind(Number(rsvpDel[1])).run();
+      return json({ ok: true });
+    }
+
     if (path === '/api/guestbook' && request.method === 'POST') {
       const b = await request.json().catch(() => null);
       if (!b || b.fax) return json({ ok: true }); // honeypot tripped: lie politely
