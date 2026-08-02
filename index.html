@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>~*~ CJ ♥ MARGARET 4EVER ~*~ (Official Wedding Homepage)</title>
+<!-- ============================================================ -->
+<!-- (c) 1999-2027 CJ & Margaret Enterprises. DO NOT STEAL OUR HTML!! -->
+<!-- if you're reading this, you know HTML. marry someone who looks -->
+<!-- at you the way CJ looks at Margaret's record collection.       -->
+<!-- ============================================================ -->
+<style>
+  /* ============ GLOBAL / TILED STARFIELD ============ */
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: #C9C3F5;
+    color: #17114a;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  /* twinkling starfield: two fixed layers fading alternately (gently!!) */
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 28%, rgba(255,255,255,.95) 0 2px, transparent 3px),
+      radial-gradient(circle at 74% 12%, rgba(255,255,255,.95) 0 2px, transparent 3px),
+      radial-gradient(circle at 52% 68%, rgba(255,255,255,.85) 0 2px, transparent 3px),
+      radial-gradient(circle at 8% 88%, rgba(255,255,255,.85) 0 2px, transparent 3px),
+      radial-gradient(circle at 42% 8%, rgba(255,255,255,.8) 0 1.5px, transparent 2.5px);
+    background-size: 260px 260px, 300px 300px, 240px 240px, 320px 320px, 200px 200px;
+    animation: twinkle 4.5s ease-in-out infinite alternate;
+  }
+  body::after {
+    background:
+      radial-gradient(circle at 88% 82%, rgba(255,255,255,.9) 0 2px, transparent 3px),
+      radial-gradient(circle at 33% 50%, rgba(255,255,255,.8) 0 2px, transparent 3px),
+      radial-gradient(circle at 60% 20%, rgba(255,255,255,.85) 0 2px, transparent 3px),
+      radial-gradient(circle at 15% 62%, rgba(255,255,255,.8) 0 2px, transparent 3px),
+      radial-gradient(circle at 95% 35%, rgba(255,255,255,.8) 0 1.5px, transparent 2.5px);
+    background-size: 280px 280px, 340px 340px, 300px 300px, 260px 260px, 220px 220px;
+    animation-delay: -2.25s;
+  }
+  @keyframes twinkle { from { opacity: 1; } to { opacity: .22; } }
+  a { color: #0000EE; }
+  a:visited { color: #551A8B; }
+  a:focus-visible { outline: 3px dashed #FF3EB5; outline-offset: 2px; }
+
+  .geobar {
+    background: linear-gradient(180deg, #efefef, #c9c9c9);
+    border-bottom: 2px solid #8a8a8a;
+    color: #333;
+    font: 11px/1.4 Verdana, Geneva, sans-serif;
+    padding: 4px 10px;
+    text-align: center;
+  }
+  .geobar b { color: #cc0000; }
+
+  .shell {
+    width: min(780px, 100%);
+    margin: 14px auto 40px;
+    padding: 0 8px;
+  }
+  .panel {
+    background: #E7E4F8;
+    border: 4px outset #f6f4ff;
+    box-shadow: 8px 8px 0 rgba(23, 17, 74, .35);
+  }
+
+  /* ============ HEADER ============ */
+  .masthead { padding: 22px 14px 12px; text-align: center; }
+  .chrome {
+    margin: 0;
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: clamp(2.3rem, 8vw, 4.2rem);
+    letter-spacing: .02em;
+    background: linear-gradient(180deg, #ffffff 8%, #9ad8ff 42%, #1f5fd0 52%, #e08bff 78%, #ffffff 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1.5px #17114a;
+    filter: drop-shadow(3px 3px 0 #FF3EB5);
+  }
+  .tildes {
+    margin: 4px 0 2px;
+    font-weight: bold;
+    font-size: clamp(.95rem, 2.6vw, 1.2rem);
+    color: #d4008f;
+  }
+  .blink { animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { visibility: hidden; } }
+  .bigdate {
+    margin: 2px 0 0;
+    font: bold 1.05rem/1.4 'Times New Roman', serif;
+    color: #17114a;
+    letter-spacing: .08em;
+  }
+
+  .marquee {
+    background: #17114a;
+    color: #7CFC00;
+    font: bold 13px/1 'Courier New', monospace;
+    padding: 7px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    border-top: 2px solid #FF3EB5;
+    border-bottom: 2px solid #FF3EB5;
+  }
+  .marquee span { display: inline-block; padding-left: 100%; animation: scrollby 26s linear infinite; }
+  @keyframes scrollby { to { transform: translateX(-100%); } }
+
+  /* ============ NAV ============ */
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    background: #cfcae9;
+    border-top: 2px groove #f6f4ff;
+    border-bottom: 2px groove #f6f4ff;
+  }
+  .navbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: linear-gradient(180deg, #fdfdfd, #cfcae9);
+    border: 3px outset #f6f4ff;
+    color: #17114a !important;
+    font: bold 12px/1 Verdana, Geneva, sans-serif;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .navbtn:hover { background: #FFD500; }
+  .navbtn:active { border-style: inset; }
+  .navbtn.here { border-style: inset; background: #FF3EB5; color: #fff !important; }
+
+  .rainbow {
+    height: 7px;
+    border: 0;
+    margin: 0;
+    background: linear-gradient(90deg, #ff0000, #ff9900, #ffee00, #33cc33, #3366ff, #9933ff, #ff0000);
+    background-size: 200% 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .rainbow { animation: rainbowslide 3s linear infinite; }
+    @keyframes rainbowslide { to { background-position: -200% 0; } }
+  }
+
+  /* ============ PAGE SECTIONS ============ */
+  .page { display: none; padding: 18px 16px 26px; }
+  .page.active { display: block; }
+  .page h2 {
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: 1.9rem;
+    letter-spacing: .03em;
+    color: #FF3EB5;
+    text-shadow: 2px 2px 0 #17114a;
+    text-align: center;
+    margin: 6px 0 4px;
+  }
+  .page h3 {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: #17114a;
+    background: #FFD500;
+    display: inline-block;
+    padding: 4px 12px;
+    border: 2px solid #17114a;
+    box-shadow: 3px 3px 0 #17114a;
+    margin: 22px 0 10px;
+  }
+  .center { text-align: center; }
+  .times { font-family: 'Times New Roman', serif; font-size: 1.06rem; }
+  .small { font-size: .78rem; }
+  .pink { color: #d4008f; }
+  .lime { color: #1e9e00; }
+
+  .whitebox {
+    background: #fff;
+    border: 2px ridge #b6aef0;
+    padding: 12px 14px;
+    margin: 10px 0;
+  }
+
+  .construction {
+    margin: 16px auto;
+    max-width: 480px;
+    border: 4px solid;
+    border-image: repeating-linear-gradient(45deg, #111 0 12px, #FFD500 12px 24px) 4;
+    background: #fffbe0;
+    padding: 10px 14px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  table.datagrid {
+    margin: 8px auto;
+    border-collapse: collapse;
+    font: bold 13px/1.5 Verdana, Geneva, sans-serif;
+    background: #fff;
+  }
+  table.datagrid td, table.datagrid th {
+    border: 2px ridge #b6aef0;
+    padding: 7px 12px;
+    text-align: left;
+  }
+  table.datagrid th { background: #17114a; color: #7CFC00; font-family: 'Courier New', monospace; letter-spacing: .08em; }
+  table.datagrid td.k { background: #FF3EB5; color: #fff; white-space: nowrap; }
+
+  /* ============ COUNTDOWN + COUNTER ============ */
+  .odometer {
+    display: inline-block;
+    background: #000;
+    color: #7CFC00;
+    font: bold 1.35rem/1 'Courier New', monospace;
+    letter-spacing: .22em;
+    padding: 8px 10px 8px 14px;
+    border: 3px inset #888;
+  }
+  .countrow { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 10px 0 4px; }
+  .countcell { text-align: center; }
+  .countcell .small { font-family: Verdana, sans-serif; font-weight: bold; letter-spacing: .1em; }
+
+  /* ============ WEDDING JUKEBOX WIDGET ============ */
+  .jukebox {
+    position: fixed;
+    right: 14px;
+    top: 92px;
+    width: 218px;
+    z-index: 80;
+    border: 3px outset #f6f4ff;
+    background: #E7E4F8;
+    box-shadow: 6px 6px 0 rgba(23, 17, 74, .4);
+    font: bold 11px/1.4 Verdana, Geneva, sans-serif;
+  }
+  .jb-titlebar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(90deg, #17114a, #3a5fcd);
+    color: #fff;
+    padding: 4px 6px;
+    font-size: 10px;
+    letter-spacing: .05em;
+    cursor: move;
+    touch-action: none;
+    user-select: none;
+  }
+  .jb-titlebar button {
+    border: 2px outset #f6f4ff;
+    background: #cfcae9;
+    width: 20px;
+    height: 17px;
+    font: bold 11px/1 Verdana, sans-serif;
+    cursor: pointer;
+    padding: 0;
+    color: #17114a;
+  }
+  .jb-titlebar button:active { border-style: inset; }
+  .jb-led {
+    background: #000;
+    color: #7CFC00;
+    font: bold 10px/1.3 'Courier New', monospace;
+    padding: 5px 6px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .jukebox.playing .jb-led span { display: inline-block; padding-left: 100%; animation: scrollby 9s linear infinite; }
+  .jb-viz { display: flex; gap: 3px; height: 18px; align-items: flex-end; background: #000; padding: 0 6px 3px; }
+  .jb-viz i { width: 9px; height: 3px; background: #FF3EB5; }
+  .jukebox.playing .jb-viz i { animation: jbviz .5s ease-in-out infinite alternate; }
+  .jb-viz i:nth-child(2) { animation-delay: .12s; background: #FFD500; }
+  .jb-viz i:nth-child(3) { animation-delay: .24s; }
+  .jb-viz i:nth-child(4) { animation-delay: .36s; background: #FFD500; }
+  .jb-viz i:nth-child(5) { animation-delay: .48s; }
+  @keyframes jbviz { from { height: 3px; } to { height: 16px; } }
+  .jb-list { list-style: none; margin: 4px; padding: 2px; background: #fff; border: 2px inset #b6aef0; max-height: 160px; overflow: auto; }
+  .jb-list button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    font: bold 10px/1.9 Verdana, sans-serif;
+    cursor: pointer;
+    padding: 0 5px;
+    color: #17114a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .jb-list li.sel button { background: #17114a; color: #7CFC00; }
+  .jb-controls { display: flex; gap: 4px; justify-content: center; padding: 6px 6px 4px; }
+  .jb-controls button {
+    border: 3px outset #f6f4ff;
+    background: linear-gradient(180deg, #fdfdfd, #cfcae9);
+    font: bold 12px/1 Verdana, sans-serif;
+    padding: 4px 14px;
+    cursor: pointer;
+    color: #17114a;
+  }
+  .jb-controls button:active { border-style: inset; }
+  .jb-note { text-align: center; font-size: 9px; padding: 0 4px 6px; color: #574fb5; }
+  .jukebox.min .jb-body { display: none; }
+  @media (max-width: 1259px) {
+    .jukebox { top: auto; bottom: 12px; }
+  }
+
+  /* ============ DIAL-UP PHOTO LOADER ============ */
+  .dialup {
+    max-width: 440px;
+    margin: 12px auto;
+    background: #fff;
+    border: 2px inset #b6aef0;
+    padding: 8px;
+    font: 11px/1.6 Verdana, Geneva, sans-serif;
+    text-align: left;
+  }
+  .dialup-frame { border: 1px solid #999; background: #f4f4f4; min-height: 90px; }
+  .dialup-frame img { display: block; width: 100%; height: auto; }
+  .dialup-frame img.loading { clip-path: inset(0 0 100% 0); animation: dialup-reveal 4s steps(18, end) forwards; }
+  @keyframes dialup-reveal { to { clip-path: inset(0 0 0 0); } }
+  .dialup .loadbar i { animation: none; }
+  .dialup .loadbar i.go { animation: photobar 4s steps(18, end) forwards; }
+  @keyframes photobar { to { width: 100%; } }
+  .dialup-status { margin-top: 4px; color: #574fb5; }
+
+  .mapbox {
+    max-width: 720px;
+    margin: 12px auto;
+    background: #f2e9c9;
+    border: 4px double #8a6d3b;
+    outline: 2px dashed #8a6d3b;
+    outline-offset: -10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .mapbox img { display: block; width: 100%; height: auto; border: 1px solid #c9b98a; }
+
+  /* ============ BUTTONS / FORMS ============ */
+  .btn, .page input[type="submit"], .page button.btn {
+    display: inline-block;
+    padding: 9px 18px;
+    background: linear-gradient(180deg, #fdfdfd, #cfcae9);
+    border: 3px outset #f6f4ff;
+    color: #17114a;
+    font: bold 13px/1 Verdana, Geneva, sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .btn:hover, .page input[type="submit"]:hover { background: #FFD500; }
+  .btn:active, .page input[type="submit"]:active { border-style: inset; }
+
+  fieldset {
+    border: 2px groove #f6f4ff;
+    background: #f3f1fc;
+    margin: 14px 0;
+    padding: 12px 14px;
+  }
+  legend {
+    font: bold 12px/1 Verdana, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    background: #17114a;
+    color: #7CFC00;
+    padding: 4px 10px;
+  }
+  .page label { font-weight: bold; }
+  .page input[type="text"], .page input[type="email"], .page input[type="url"], .page select, .page textarea {
+    font: 14px/1.4 'Comic Sans MS', 'Chalkboard SE', cursive;
+    padding: 6px 8px;
+    border: 2px inset #b6aef0;
+    background: #fff;
+    color: #17114a;
+    max-width: 100%;
+  }
+  .formrow { margin: 9px 0; }
+  .formrow .wide { width: 320px; }
+
+  .confirmbox {
+    display: none;
+    border: 4px double #1e9e00;
+    background: #eaffe4;
+    padding: 16px;
+    text-align: center;
+    margin: 14px 0;
+  }
+  .confirmbox.show { display: block; }
+  .confirmbox .party { font-size: 2rem; }
+
+  /* ============ PHOTOS (56k) ============ */
+  .photogrid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 14px 0; }
+  .brokenimg {
+    width: 210px;
+    background: #fff;
+    border: 2px inset #b6aef0;
+    padding: 8px;
+    font: 11px/1.5 Verdana, sans-serif;
+  }
+  .brokenimg .frame {
+    height: 120px;
+    background: #f4f4f4;
+    border: 1px solid #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #666;
+  }
+  .brokenimg .frame .icon {
+    width: 22px; height: 22px;
+    border: 1px solid #888;
+    background: linear-gradient(135deg, #fff 60%, #f4f4f4 60%);
+    display: grid; place-items: center;
+    font-size: 12px;
+  }
+  .loadbar {
+    height: 12px;
+    border: 2px inset #888;
+    background: #fff;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .loadbar i {
+    display: block;
+    height: 100%;
+    background: repeating-linear-gradient(90deg, #3366ff 0 8px, #6699ff 8px 16px);
+    width: 3%;
+  }
+  .loadbar i { animation: crawl 240s cubic-bezier(.05, .7, .1, 1) forwards; }
+  @keyframes crawl { to { width: 38%; } }
+  .polaroid {
+    width: 230px;
+    background: #fff;
+    border: 1px solid #bbb;
+    box-shadow: 4px 4px 0 rgba(23, 17, 74, .3);
+    padding: 10px 10px 6px;
+    transform: rotate(-2deg);
+  }
+  .polaroid .pic {
+    height: 150px;
+    background: linear-gradient(180deg, #ffd9a0 0 55%, #e8a2c8 55% 70%, #caa2e8 70%);
+    display: grid;
+    place-items: center;
+    font-size: 3rem;
+    border: 1px solid #999;
+  }
+  .polaroid figcaption { font: bold 12px/1.5 'Comic Sans MS', cursive; text-align: center; padding-top: 6px; }
+
+  /* ============ REGISTRY ============ */
+  .wishrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+  .wishbar { flex: 1; min-width: 140px; height: 16px; border: 2px inset #888; background: #fff; }
+  .wishbar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #FF3EB5 0 8px, #ff7ed0 8px 16px); }
+  .stamp {
+    display: inline-block;
+    border: 3px double #cc0000;
+    color: #cc0000;
+    font: bold 11px/1 Verdana, sans-serif;
+    padding: 4px 8px;
+    transform: rotate(-6deg);
+    letter-spacing: .1em;
+  }
+
+  /* ============ GUESTBOOK ============ */
+  .gbentry {
+    background: #fff;
+    border: 2px ridge #b6aef0;
+    margin: 10px 0;
+    padding: 10px 12px;
+  }
+  .gbentry .gbmeta { font: bold 11px/1.5 Verdana, sans-serif; color: #574fb5; }
+  .gbentry .gbmeta .hp { color: #0000EE; text-decoration: underline; }
+  .gbentry p { margin: 6px 0 0; }
+
+  /* ============ FOOTER ============ */
+  .footer { padding: 18px 14px 22px; text-align: center; background: #cfcae9; border-top: 2px groove #f6f4ff; }
+  .visitors { font: bold 11px/1.8 Verdana, sans-serif; color: #574fb5; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 14px 0 10px; }
+  .badge {
+    width: 88px;
+    height: 31px;
+    display: grid;
+    place-items: center;
+    font: bold 8px/1.15 Verdana, Geneva, sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    border: 2px outset #ddd;
+    background: linear-gradient(180deg, #eee, #bbb);
+    color: #222;
+    user-select: none;
+  }
+  .badge.navy { background: #001a4d; color: #fff; border-color: #335; }
+  .badge.green { background: #0a3d0a; color: #7CFC00; border-color: #365; }
+  .badge.geo { background: linear-gradient(180deg, #fff, #cde); color: #cc0000; }
+  .badge.pink { background: #FF3EB5; color: #fff; border-color: #f9c; }
+  .webring {
+    max-width: 420px;
+    margin: 14px auto;
+    background: #fff;
+    border: 2px ridge #b6aef0;
+    padding: 10px;
+    font: bold 12px/1.7 Verdana, sans-serif;
+  }
+  .copyright { font: 11px/1.7 'Times New Roman', serif; margin-top: 12px; }
+
+  /* ============ ASK JEEEVES ============ */
+  .navemoji {
+    font-size: 21px;
+    line-height: 1;
+  }
+  .navicon {
+    width: 24px;
+    height: 24px;
+  }
+  /* the portal itself defects to y2k-era search-engine minimalism: white, Arial, no sparkles */
+  .jeeves-portal {
+    background: #fff;
+    border: 2px ridge #b6aef0;
+    padding: 26px 14px 20px;
+    margin: 12px 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+    text-align: center;
+  }
+  .jeeves-hero { display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap; }
+  .jeeves-butler { margin: 0; }
+  .jeeves-butler img { width: 175px; height: auto; display: block; margin: 0 auto; }
+  .jeeves-butler figcaption { font: italic 11px/1.5 Georgia, 'Times New Roman', serif; color: #555; padding-top: 5px; }
+  .jeeves-brand { text-align: left; }
+  .jeeves-logo {
+    display: block;
+    width: min(250px, 70vw);
+    height: auto;
+    margin: 0 0 6px 4px;
+  }
+  .jeeves-searchbox {
+    display: inline-block;
+    background: #fdfefe;
+    border: 1px solid #d9e4f2;
+    box-shadow: 0 0 0 5px #eef4fb;
+    padding: 12px 16px 10px;
+    margin: 10px 0 0 6px;
+    text-align: left;
+  }
+  .jeeves-weblinks { font: bold 12px/1.6 Arial, Helvetica, sans-serif; margin: 0 0 7px; color: #000; }
+  .jeeves-weblinks a { color: #0000cc; }
+  .jeeves-row { display: flex; }
+  .page input.jeeves-q {
+    width: min(300px, 56vw);
+    font: 14px/1.3 Arial, Helvetica, sans-serif;
+    padding: 6px 8px;
+    border: 1px solid #7f9db9;
+    border-right: 0;
+    background: #fff;
+    color: #000;
+  }
+  .jeeves-go {
+    background: linear-gradient(180deg, #6aaee6 0%, #3d87c4 45%, #1f6cb0 50%, #2a79bd 100%);
+    color: #fff;
+    font: bold 13px/1 Arial, Helvetica, sans-serif;
+    border: 1px solid #17568c;
+    border-radius: 3px;
+    padding: 0 18px;
+    cursor: pointer;
+  }
+  .jeeves-go:active { filter: brightness(.9); }
+  .jeeves-skins { font: 11px/1 Arial, Helvetica, sans-serif; color: #444; margin: 9px 0 0 2px; }
+  .jeeves-skins .sun { color: #f60; }
+  .jeeves-results { display: none; max-width: 540px; margin: 22px auto 0; text-align: left; }
+  .jeeves-results.show { display: block; }
+  .jr-youasked { font: 12px/1.6 Arial, Helvetica, sans-serif; color: #444; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin: 0; }
+  .jr-youasked b { color: #000; }
+  .jr-card { display: flex; gap: 12px; align-items: flex-start; background: #f2f7fd; border: 1px solid #d9e4f2; padding: 12px 14px; margin-top: 12px; }
+  .jr-card img { width: 46px; height: 46px; flex-shrink: 0; }
+  .jr-text { font: 13px/1.65 Arial, Helvetica, sans-serif; margin: 0; }
+  .jr-text .jr-name { font-weight: bold; color: #17568c; }
+  .jr-cursor {
+    display: inline-block;
+    width: .55em;
+    height: 1.05em;
+    background: #17568c;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  .jr-powered { font: 10px/1.6 Arial, Helvetica, sans-serif; color: #999; margin: 8px 0 0; text-align: right; }
+  .jeeves-also { max-width: 540px; margin: 18px auto 0; text-align: left; font: 12px/1.5 Arial, Helvetica, sans-serif; }
+  .jeeves-also b { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #444; }
+  .jeeves-also a { display: inline-block; color: #0000cc; margin: 3px 12px 3px 0; }
+
+  /* ============ SPARKLE TRAIL ============ */
+  .sparkle {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    font-size: 13px;
+    animation: sparklefall 800ms ease-out forwards;
+  }
+  @keyframes sparklefall {
+    to { transform: translateY(26px) scale(.4); opacity: 0; }
+  }
+
+  .bouncers { font-size: 2rem; letter-spacing: .3em; }
+  .bouncers span { display: inline-block; animation: boing .8s ease-in-out infinite alternate; }
+  .bouncers span:nth-child(2) { animation-delay: .4s; }
+  @keyframes boing { to { transform: translateY(-9px); } }
+
+  @media (max-width: 560px) {
+    .formrow .wide { width: 100%; }
+    .brokenimg, .polaroid { width: 100%; max-width: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="geobar">You are here: <b>GeoCities</b> » HeartlandValley » Vows » <b>/cj_n_margaret4ever/</b> &nbsp;|&nbsp; <span class="small">FREE homepages for all!!</span></div>
+
+<aside class="jukebox" id="jukebox" aria-label="Wedding MIDI jukebox">
+  <div class="jb-titlebar">
+    <span>💿 WEDDING JUKEBOX v2.0</span>
+    <button type="button" id="jb-min" aria-label="Minimize jukebox" title="Minimize">_</button>
+  </div>
+  <div class="jb-body" id="jb-body">
+    <div class="jb-led"><span id="jb-np">** stopped — pick a jam!! **</span></div>
+    <div class="jb-viz" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <ol class="jb-list" id="jb-list"></ol>
+    <div class="jb-controls">
+      <button type="button" id="jb-play" aria-label="Play">▶</button>
+      <button type="button" id="jb-stop" aria-label="Stop">■</button>
+      <button type="button" id="jb-next" aria-label="Next track">⏭</button>
+    </div>
+    <div class="jb-note">100% REAL MIDI* (*square waves) · music follows you page 2 page, as GeoCities intended</div>
+  </div>
+</aside>
+
+<div class="shell">
+  <div class="panel">
+
+    <!-- ============ MASTHEAD ============ -->
+    <header class="masthead">
+      <h1 class="chrome">CJ ♥ MARGARET</h1>
+      <p class="tildes">~*~ 2gether 4ever ~*~</p>
+      <p class="bigdate"><span class="blink">★</span> MARCH 27, 2027 · TOPANGA, CALIFORNIA <span class="blink">★</span></p>
+    </header>
+
+    <div class="marquee"><span>☆*:.｡. WELCOME TO THE OFFICIAL WEDDING HOMEPAGE OF CJ + MARGARET .｡.:*☆ &nbsp; RSVP BY FEBRUARY 27, 2027 OR CJ'S MOM WILL CALL YOU (THIS IS A THREAT) &nbsp; ☆*:.｡. DON'T FORGET TO SIGN THE GUESTBOOK!!! .｡.:*☆ &nbsp; 🐶 NEW!! ASK JEEEVES — THE DOG HAS ANSWERS 🐶</span></div>
+
+    <!-- ============ NAV ============ -->
+    <nav class="nav" aria-label="Site pages">
+      <a class="navbtn" href="#home"><span class="navemoji">🏠</span> Home</a>
+      <a class="navbtn" href="#story"><span class="navemoji">💘</span> Our Story</a>
+      <a class="navbtn" href="#bigday"><span class="navemoji">⛪</span> The Big Day</a>
+      <a class="navbtn" href="#travel"><span class="navemoji">🚗</span> Getting There</a>
+      <a class="navbtn" href="#photos"><span class="navemoji">📸</span> Photos</a>
+      <a class="navbtn" href="#registry"><span class="navemoji">🎁</span> Registry</a>
+      <a class="navbtn" href="#rsvp"><span class="navemoji">💌</span> RSVP!!</a>
+      <a class="navbtn" href="#guestbook"><span class="navemoji">📖</span> Guestbook</a>
+      <a class="navbtn" href="#askjeeves"><img class="navicon" src="photos/jeeves_icon.svg" alt=""> Ask Jeeeves</a>
+    </nav>
+    <hr class="rainbow">
+
+    <!-- ============ HOME ============ -->
+    <main>
+    <section class="page" id="pg-home" aria-labelledby="h-home">
+      <h2 id="h-home">Welcome to our little corner of the World Wide Web!!!</h2>
+      <p class="center bouncers" aria-hidden="true"><span>💃</span><span>🕺</span></p>
+      <p class="times center">Together with their families (and Margaret's cat, Fleetwood),<br>
+      <b>CJ Sanders</b> &amp; <b>Margaret</b> joyfully invite you to their wedding.<br>
+      <span class="pink">Yes, it's finally happening. No, you're not dreaming.</span></p>
+
+      <h3>Hot off the scanner!!</h3>
+      <div class="dialup">
+        <div class="dialup-frame">
+          <img id="couple-photo" src="photos/the_happy_couple.jpg" alt="CJ and Margaret in a photo booth, about to kiss, in front of a backdrop of pastel hearts" class="loading" width="800" height="809">
+        </div>
+        <div class="loadbar"><i id="photo-bar"></i></div>
+        <div class="dialup-status"><b id="photo-status">☎ Dialing img server…</b> · the_happy_couple.jpg · 119 KB · 28.8 kbps</div>
+        <div class="dialup-status center pink"><b>the photo booth knew before we did 💘</b></div>
+      </div>
+
+      <h3>Countdown to "I do"</h3>
+      <div class="countrow" id="countdown" aria-live="off">
+        <div class="countcell"><span class="odometer" id="cd-d">000</span><div class="small">DAYS</div></div>
+        <div class="countcell"><span class="odometer" id="cd-h">00</span><div class="small">HRS</div></div>
+        <div class="countcell"><span class="odometer" id="cd-m">00</span><div class="small">MIN</div></div>
+        <div class="countcell"><span class="odometer" id="cd-s">00</span><div class="small">SEC</div></div>
+      </div>
+
+      <p class="center small pink">🎵 Crank up the <b>WEDDING JUKEBOX</b> (floating over there ➡) — five certified wedding bangers, lovingly converted to MIDI!!</p>
+
+      <div class="construction">🚧 <span class="blink">UNDER CONSTRUCTION</span> 🚧<br>
+      <span class="small">The honeymoon page is not done yet. Please pardon our dust!!</span></div>
+
+      <h3>What's new!!</h3>
+      <div class="whitebox small">
+        <b>02/20/27</b> — ASK JEEEVES is LIVE!! Our dog answers your wedding questions now. He is very wise. He ate a bee once.<br>
+        <b>02/14/27</b> — WEDDING JUKEBOX v2.0!! Now with FIVE songs. Aunt Carol has been warned.<br>
+        <b>02/01/27</b> — Added the In-N-Out truck to the schedule. You're welcome.<br>
+        <b>01/15/27</b> — Guestbook is LIVE!! Aunt Carol has already signed it 3 times.<br>
+        <b>12/02/26</b> — Fixed the marquee. CJ said it was "too fast." It was not.<br>
+        <b>11/30/26</b> — Margaret approved the sparkles. Site is officially DONE (it is not).
+      </div>
+
+      <p class="center"><a class="btn" href="#rsvp">💌 RSVP NOW!!</a> &nbsp; <a class="btn" href="#guestbook">📖 Sign the guestbook</a></p>
+      <p class="center small lime">✓ This site is Y2K compliant. We checked.</p>
+    </section>
+
+    <!-- ============ OUR STORY ============ -->
+    <section class="page" id="pg-story" aria-labelledby="h-story">
+      <h2 id="h-story">Our Story (the whole saga)</h2>
+      <p class="times center">Every great love story starts somewhere.<br>Ours starts with a fight over a record.</p>
+
+      <table class="datagrid">
+        <tr><th>DATE</th><th>WHAT HAPPENED!!</th></tr>
+        <tr><td class="k">🎵 2019</td><td>CJ and Margaret grab the same Fleetwood Mac LP at the Topanga vintage market. Margaret wins. CJ gets a consolation milkshake date. Best loss of his life.</td></tr>
+        <tr><td class="k">📼 2020</td><td>First road trip. Margaret makes a 6-hour mixtape. CJ cries at track 4 and denies it to this day. (It was track 4.)</td></tr>
+        <tr><td class="k">🏠 2021</td><td>They move in together, along with roughly 900 vinyl records and one extremely judgmental cat (Fleetwood).</td></tr>
+        <tr><td class="k">💍 2025</td><td>CJ proposes at the same diner booth from date #1. The ring is hidden in a milkshake. Health code violation? Maybe. Worth it? YES.</td></tr>
+        <tr><td class="k">👰 2027</td><td>See you in Topanga!! Bring your dancing shoes (and a jacket for the canyon night).</td></tr>
+      </table>
+
+      <h3>A/S/L?</h3>
+      <div class="whitebox center">
+        <b>CJ:</b> old enough / groom / Topanga 😎<br>
+        <b>Margaret:</b> none of your business / bride / same house as that guy ☝️
+      </div>
+    </section>
+
+    <!-- ============ THE BIG DAY ============ -->
+    <section class="page" id="pg-bigday" aria-labelledby="h-bigday">
+      <h2 id="h-bigday">The Big Day!!</h2>
+      <p class="times center"><b>Saturday, March 27, 2027</b> · The Starlite Ballroom · Topanga, CA</p>
+
+      <h3>Schedule of events</h3>
+      <table class="datagrid">
+        <tr><th>TIME</th><th>EVENT</th></tr>
+        <tr><td class="k">3:30 PM</td><td>Doors open!! Frosty drinks in the shade. Find your seat, find your friends.</td></tr>
+        <tr><td class="k">4:00 PM</td><td>Ceremony. Short and sweet — the dance floor is calling and we respect that.</td></tr>
+        <tr><td class="k">4:30 PM</td><td>Photos + cocktails. The mountains do a thing at sunset. You'll see.</td></tr>
+        <tr><td class="k">6:00 PM</td><td>Dinner!! (You picked your meal when you RSVP'd. You did RSVP, right??)</td></tr>
+        <tr><td class="k">7:30 PM</td><td>Toasts. Dave has been given a 4-minute limit and a stopwatch.</td></tr>
+        <tr><td class="k">8:00 PM</td><td>DANCING. The DJ has been told "yes" to every request ending in "…by ABBA."</td></tr>
+        <tr><td class="k">11:30 PM</td><td>Last song. It's a slow one. Grab somebody.</td></tr>
+        <tr><td class="k">MIDNIGHT</td><td>🍔 In-N-Out truck. This is not a drill.</td></tr>
+      </table>
+
+      <h3>Dress code</h3>
+      <div class="whitebox">
+        <b>"Canyon Formal / 2 Cool 4 School."</b> Loud colors strongly encouraged. Flowy is your friend. Layers are <i>wise</i> — the canyon cools off fast after sunset. If you match the decor (hot pink + gold), you win a prize at the reception. Really.
+      </div>
+
+      <h3>The fine print</h3>
+      <div class="whitebox small">
+        ✔ The bar is open. The mic is not.<br>
+        ✔ Unplugged ceremony — no camcorders, our photographer has it covered!!<br>
+        ✔ Kids welcome at the ceremony; the dance floor after 9 PM is rated PG-13 (Uncle Rick's moves).<br>
+        ✔ Questions? <a href="#guestbook">Ask in the guestbook</a> — we actually read it.
+      </div>
+    </section>
+
+    <!-- ============ GETTING THERE ============ -->
+    <section class="page" id="pg-travel" aria-labelledby="h-travel">
+      <h2 id="h-travel">Getting There</h2>
+      <p class="times center">We printed you MapQuest directions. You're welcome.</p>
+
+      <h3>Directions (MapQuest™, allegedly)</h3>
+      <div class="whitebox">
+        <ol style="margin:4px 0 4px 18px; padding:0;">
+          <li>Fly into <b>LAX</b> — 40 min away — or <b>Burbank (BUR)</b> if you enjoy a calmer airport and a longer story.</li>
+          <li>Take PCH north until the ocean is on your left and your deadlines are behind you.</li>
+          <li>Turn right at <b>Topanga Canyon Blvd</b>. Yes, up. Keep going up.</li>
+          <li>Wind past the crystal shop, the vintage market, and at least two people playing flute. This is correct.</li>
+          <li>You have arrived!! Estimated time: 40 min from LAX. Estimated vibes: immaculate.</li>
+        </ol>
+      </div>
+
+      <h3>🗺 The venue map!! (yes it's a real treasure map)</h3>
+      <div class="mapbox">
+        <img src="photos/elsewhere_map.jpg" alt="Hand-painted watercolor map of Elsewhere, a hidden venue in Topanga Canyon, showing the Gate House, the Great Hall of Infinite Proundry, the Farmhouse, the Barn, the Bungalow, a pond called Somewhere Else, and a red star marking parking" width="800" height="834">
+      </div>
+
+      <h3>Where to stay</h3>
+      <table class="datagrid">
+        <tr><th>HOTEL</th><th>THE DEAL</th></tr>
+        <tr><td class="k">🌊 Starlite Motor Lodge</td><td>Our room block!! Down on PCH below the canyon — say "CJ &amp; MARGARET 4EVER" at the desk for the group rate. Kidney-shaped pool. Ocean view if you lean.</td></tr>
+        <tr><td class="k">🦩 The Pink Flamingo Inn</td><td>Down the hill in Malibu. Extremely pink. Margaret's pick.</td></tr>
+        <tr><td class="k">⛺ Topanga State Park</td><td>Actual canyon camping, actual raccoons. We admire you. We will not join you.</td></tr>
+      </table>
+
+      <h3>⚠ Weather advisory ⚠</h3>
+      <div class="construction">🌤 It is MARCH in TOPANGA. 🌤<br>
+      <span class="small">Forecast: 68°F, golden canyon light, possible dramatic ocean-fog cameo. Bring a jacket for dancing under the oaks — the canyon gets chilly after dark!!</span></div>
+    </section>
+
+    <!-- ============ PHOTOS ============ -->
+    <section class="page" id="pg-photos" aria-labelledby="h-photos">
+      <h2 id="h-photos">Photo Gallery!!</h2>
+      <p class="center small pink">Photos are loading via 56k modem. Estimated completion: <b>March 27, 2027.</b> Please do not pick up the phone.</p>
+
+      <div class="photogrid">
+        <div class="brokenimg">
+          <div class="frame"><span class="icon">🖼</span> us_at_the_dinosaurs.jpg</div>
+          <div class="loadbar"><i style="animation-duration:260s;"></i></div>
+          <b>2%</b> of 340 KB · est. 4 hrs remaining
+        </div>
+        <div class="brokenimg">
+          <div class="frame"><span class="icon">🖼</span> proposal_milkshake_CLOSEUP.jpg</div>
+          <div class="loadbar"><i style="animation-duration:200s;"></i></div>
+          <b>9%</b> of 512 KB · connection interrupted (Mom called)
+        </div>
+        <div class="brokenimg">
+          <div class="frame"><span class="icon">🖼</span> fleetwood_in_a_bowtie.jpg</div>
+          <div class="loadbar"><i style="animation-duration:150s;"></i></div>
+          <b>14%</b> of 1.2 MB · why is the cat photo the biggest file
+        </div>
+        <figure class="polaroid" style="margin:0;">
+          <div class="pic" aria-hidden="true">🌴💑🌵</div>
+          <figcaption>the only one that finished downloading!! (Topanga, 2025)</figcaption>
+        </figure>
+      </div>
+
+      <p class="center small">Full Webshots album coming after the honeymoon!! Bookmark us (Ctrl+D)!!</p>
+    </section>
+
+    <!-- ============ REGISTRY ============ -->
+    <section class="page" id="pg-registry" aria-labelledby="h-registry">
+      <h2 id="h-registry">Gift Registry</h2>
+      <p class="times center">Your presence is the present!! But if your love language is "stuff," here's the wishlist.</p>
+
+      <h3>The official wishlist</h3>
+      <div class="whitebox">
+        <div class="wishrow"><b>🔊 Lava lamp (the BIG one)</b> <span class="wishbar"><i style="width:66%"></i></span> <span class="small"><b>2 of 3</b> purchased!!</span></div>
+        <div class="wishrow"><b>🍳 Cast iron skillet</b> <span class="wishbar"><i style="width:100%"></i></span> <span class="stamp">PURCHASED!!</span></div>
+        <div class="wishrow"><b>🎶 Record crate #37</b> <span class="wishbar"><i style="width:0%"></i></span> <span class="small">(Margaret says no. CJ says please.)</span></div>
+        <div class="wishrow"><b>🏝 Honeymoon fund</b> <span class="wishbar"><i style="width:34%"></i></span> <span class="small">34% of the way to Kauai!!</span></div>
+      </div>
+
+      <p class="center">
+        <a class="btn" href="#registry" onclick="return false;">🛒 Crate &amp; Barrel</a>
+        <a class="btn" href="#registry" onclick="return false;">🛒 Target</a>
+        <a class="btn" href="#registry" onclick="return false;">🏝 Honeymoon fund</a>
+      </p>
+      <p class="center small">(Demo links — the real registry goes here. Dial-up users: allow 45 seconds.)</p>
+      <p class="center small pink">Also accepted: MIDI files, mixtapes, and embarrassing photos of the groom for the slideshow.</p>
+    </section>
+
+    <!-- ============ RSVP ============ -->
+    <section class="page" id="pg-rsvp" aria-labelledby="h-rsvp">
+      <h2 id="h-rsvp">R.S.V.P.!!</h2>
+      <p class="times center">Kindly reply by <b>February 27, 2027</b>. <span class="pink">After that, CJ's mom starts calling. This is a threat.</span></p>
+
+      <div class="confirmbox" id="rsvp-confirm" role="status">
+        <div class="party">🎉🎊🎉</div>
+        <b id="rsvp-confirm-msg">WOOHOO!!</b><br>
+        <span class="small">Your RSVP has been beamed to our inbox. You may now boogie freely.</span>
+      </div>
+
+      <form id="rsvp-form">
+        <fieldset>
+          <legend>WHO ARE YOU??</legend>
+          <div class="formrow"><label for="r-name">Your name:</label><br><input type="text" id="r-name" class="wide" required maxlength="60"></div>
+          <div class="formrow"><label for="r-email">Your e-mail (for the confirmation e-card):</label><br><input type="email" id="r-email" class="wide" maxlength="80"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>ARE YOU COMING??</legend>
+          <div class="formrow">
+            <label><input type="radio" name="r-attend" value="yes" checked> WOOHOO YES!! 🎉</label><br>
+            <label><input type="radio" name="r-attend" value="no"> Regretfully, no 😢 (we will discuss this)</label>
+          </div>
+          <div class="formrow">
+            <label for="r-party">How many in your party?</label>
+            <select id="r-party">
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6 (whoa)</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>DINNER!!</legend>
+          <div class="formrow">
+            <label><input type="radio" name="r-meal" value="chicken" checked> 🍗 Chicken (it's really good)</label><br>
+            <label><input type="radio" name="r-meal" value="steak"> 🥩 Steak (also really good)</label><br>
+            <label><input type="radio" name="r-meal" value="veggie"> 🥦 Vegetarian (chef's actual favorite)</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>IMPORTANT QUESTIONS</legend>
+          <div class="formrow"><label for="r-song">One song that WILL get you on the dance floor:</label><br><input type="text" id="r-song" class="wide" maxlength="80" placeholder="…by ABBA"></div>
+          <div class="formrow"><label><input type="checkbox" id="r-boogie" checked> I solemnly swear to boogie. 🕺</label></div>
+          <div class="formrow"><label for="r-msg">Message for the happy couple:</label><br><textarea id="r-msg" class="wide" rows="3" maxlength="400"></textarea></div>
+        </fieldset>
+
+        <p class="center"><input type="submit" value="💌 SEND IT!!"></p>
+        <p class="center small">(Demo form — your RSVP saves to this browser only. No data leaves your computer!!)</p>
+      </form>
+    </section>
+
+    <!-- ============ GUESTBOOK ============ -->
+    <section class="page" id="pg-guestbook" aria-labelledby="h-guestbook">
+      <h2 id="h-guestbook">~*~ Guestbook ~*~</h2>
+      <p class="center small">Please sign our guestbook!! It's like a hug, but in HTML.</p>
+
+      <form id="gb-form">
+        <fieldset>
+          <legend>SIGN IT!!</legend>
+          <div class="formrow"><label for="g-name">Name:</label><br><input type="text" id="g-name" class="wide" required maxlength="40"></div>
+          <div class="formrow"><label for="g-from">Where are you from?</label><br><input type="text" id="g-from" class="wide" maxlength="40" placeholder="e.g. Tucson, AZ"></div>
+          <div class="formrow"><label for="g-hp">Your homepage (optional):</label><br><input type="text" id="g-hp" class="wide" maxlength="80" placeholder="http://geocities.com/…"></div>
+          <div class="formrow"><label for="g-msg">Message:</label><br><textarea id="g-msg" class="wide" rows="3" required maxlength="300"></textarea></div>
+          <p><button type="submit" class="btn">✍️ SIGN THE GUESTBOOK</button> <span class="small">(saves to this browser only)</span></p>
+        </fieldset>
+      </form>
+
+      <h3>The guests have spoken</h3>
+      <div id="gb-entries"></div>
+    </section>
+
+    <!-- ============ ASK JEEEVES ============ -->
+    <section class="page" id="pg-askjeeves" aria-labelledby="h-askjeeves">
+      <h2 id="h-askjeeves">ASK JEEEVES!!</h2>
+      <p class="times center">Got a wedding question? Ask our dog.<br>He is <i>extremely</i> professional and only ate one RSVP card.</p>
+
+      <div class="jeeves-portal">
+        <div class="jeeves-hero">
+          <figure class="jeeves-butler">
+            <img src="photos/jeeves_butler.svg" alt="Illustration of Jeeeves the dog as a pinstriped butler, one paw extended at your service" width="360" height="480">
+            <figcaption>Jeeeves, Butler-in-Chief<br>(certified Good Boy, est. 2024)</figcaption>
+          </figure>
+          <div class="jeeves-brand">
+            <img class="jeeves-logo" src="photos/ask_jeeves_logo.png" alt="Ask Jeeeves" width="300" height="128">
+            <form id="jeeves-form">
+              <div class="jeeves-searchbox">
+                <p class="jeeves-weblinks"><a href="#askjeeves" onclick="return false;">woofs</a>, <a href="#photos">naps</a>, <a href="#bigday">snacks</a>, and <a href="#askjeeves" onclick="return false;">lots of answers</a>.</p>
+                <div class="jeeves-row">
+                  <input type="text" id="jeeves-q" class="jeeves-q" maxlength="120" placeholder="e.g. What should I wear??" aria-label="Ask Jeeeves a question about the wedding">
+                  <button type="submit" class="jeeves-go">Search</button>
+                </div>
+                <p class="jeeves-skins">Skins <span class="sun">✺</span> Advanced <span class="sun">✺</span> Treats</p>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="jeeves-results" id="jeeves-results" aria-live="polite">
+          <p class="jr-youasked">You asked: <b id="jr-q"></b></p>
+          <div class="jr-card">
+            <img src="photos/jeeves_icon.svg" alt="">
+            <p class="jr-text"><span class="jr-name">Jeeeves says:</span><br><span id="jr-a"></span></p>
+          </div>
+          <p class="jr-powered">answers powered by ARTIFICIAL INTELLIGENCE* (*one dog, all natural, very smart)</p>
+        </div>
+
+        <div class="jeeves-also">
+          <b>People also asked:</b><br>
+          <span id="jeeves-suggestions"></span>
+        </div>
+      </div>
+
+      <p class="center small pink">(Demo mode!! Jeeeves' answers are pre-recorded for now — the real AI hookup is coming soon. He is in training. He is doing his best.)</p>
+    </section>
+    </main>
+
+    <hr class="rainbow">
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+      <div class="visitors">
+        YOU ARE VISITOR NUMBER<br>
+        <span class="odometer" id="hitcounter">0001337</span><br>
+        since 11/30/26 · <span class="blink">thanks 4 stopping by!!</span>
+      </div>
+
+      <div class="webring">
+        💍 The Topanga Canyon Lovebirds WebRing 💍<br>
+        <a href="#webring" id="wr-prev">&laquo;&laquo; PREV</a> ·
+        <a href="#webring" id="wr-rand">RANDOM</a> ·
+        <a href="#webring" id="wr-next">NEXT &raquo;&raquo;</a>
+        <div class="small" id="wr-msg" style="color:#574fb5;"></div>
+      </div>
+
+      <div class="badges" aria-hidden="true">
+        <span class="badge">BEST VIEWED 800 × 600</span>
+        <span class="badge navy">NETSCAPE NOW! 4.0</span>
+        <span class="badge green">Y2K COMPLIANT ✓</span>
+        <span class="badge geo">GET A FREE HOMEPAGE</span>
+        <span class="badge pink">CJ ♥ MARGARET 4EVER</span>
+        <span class="badge">MADE WITH 🗒 NOTEPAD</span>
+      </div>
+
+      <p class="small">📧 E-mail the webmasters: <a href="mailto:cj_n_margaret4ever@example.com">cj_n_margaret4ever@example.com</a> 📧<br>
+      <span class="pink">(CJ built the tables. Margaret picked the sparkles. The cat supervised.)</span></p>
+
+      <p class="copyright">© 1999–2027 CJ &amp; Margaret Enterprises. All rights reserved.<br>
+      Do NOT steal our HTML!! (Okay you can view source a little. As a treat.)<br>
+      Last updated: 02/20/27 · This page is best experienced with irony OFF.</p>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- tiny localStorage helpers (fail-safe) ---------- */
+  function lsGet(k, fallback) {
+    try { var v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); }
+    catch (e) { return fallback; }
+  }
+  function lsSet(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode etc. */ }
+  }
+
+  /* ---------- "page" router ---------- */
+  var PAGES = {
+    home:      { el: 'pg-home',      title: '~*~ CJ ♥ MARGARET 4EVER ~*~ (Official Wedding Homepage)' },
+    story:     { el: 'pg-story',     title: 'Our Story!! - CJ ♥ MARGARET 4EVER' },
+    bigday:    { el: 'pg-bigday',    title: 'The Big Day!! - CJ ♥ MARGARET 4EVER' },
+    travel:    { el: 'pg-travel',    title: 'Getting There!! - CJ ♥ MARGARET 4EVER' },
+    photos:    { el: 'pg-photos',    title: 'Photos (loading…) - CJ ♥ MARGARET 4EVER' },
+    registry:  { el: 'pg-registry',  title: 'Registry!! - CJ ♥ MARGARET 4EVER' },
+    rsvp:      { el: 'pg-rsvp',      title: 'RSVP!! - CJ ♥ MARGARET 4EVER' },
+    guestbook: { el: 'pg-guestbook', title: 'Sign our Guestbook!! - CJ ♥ MARGARET 4EVER' },
+    askjeeves: { el: 'pg-askjeeves', title: 'ASK JEEEVES!! - CJ ♥ MARGARET 4EVER' }
+  };
+  function route() {
+    var key = (location.hash || '#home').slice(1);
+    if (!PAGES[key]) key = 'home';
+    Object.keys(PAGES).forEach(function (k) {
+      document.getElementById(PAGES[k].el).classList.toggle('active', k === key);
+    });
+    document.querySelectorAll('.navbtn').forEach(function (a) {
+      a.classList.toggle('here', a.getAttribute('href') === '#' + key);
+    });
+    document.title = PAGES[key].title;
+    if (key !== 'home') window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+  route();
+
+  /* ---------- hit counter ---------- */
+  var hits = lsGet('cjm_hits', 1336) + 1;
+  lsSet('cjm_hits', hits);
+  document.getElementById('hitcounter').textContent = String(hits).padStart(7, '0');
+
+  /* ---------- countdown ---------- */
+  var TARGET = new Date('2027-03-27T16:00:00-07:00').getTime();
+  function pad(n, w) { return String(n).padStart(w, '0'); }
+  function tickCountdown() {
+    var ms = Math.max(0, TARGET - Date.now());
+    var s = Math.floor(ms / 1000);
+    document.getElementById('cd-d').textContent = pad(Math.floor(s / 86400), 3);
+    document.getElementById('cd-h').textContent = pad(Math.floor(s / 3600) % 24, 2);
+    document.getElementById('cd-m').textContent = pad(Math.floor(s / 60) % 60, 2);
+    document.getElementById('cd-s').textContent = pad(s % 60, 2);
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
+
+  /* ---------- sparkle cursor trail ---------- */
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var GLYPHS = ['✨', '⭐', '💖', '✧'];
+  var lastSparkle = 0;
+  document.addEventListener('mousemove', function (e) {
+    var now = Date.now();
+    if (now - lastSparkle < 70) return;
+    lastSparkle = now;
+    var s = document.createElement('span');
+    s.className = 'sparkle';
+    s.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+    s.style.left = (e.clientX + 8) + 'px';
+    s.style.top = (e.clientY + 10) + 'px';
+    document.body.appendChild(s);
+    setTimeout(function () { s.remove(); }, 850);
+  });
+
+  /* ---------- dial-up photo loader ---------- */
+  var photo = document.getElementById('couple-photo');
+  var photoBar = document.getElementById('photo-bar');
+  var photoStatus = document.getElementById('photo-status');
+  function startPhotoDownload() {
+    photoBar.classList.add('go');
+    var step = 0;
+    var iv = setInterval(function () {
+      step++;
+      photoStatus.textContent = 'Downloading… ' + Math.min(100, Math.round(step / 18 * 100)) + '% of 119 KB';
+      if (step >= 18) {
+        clearInterval(iv);
+        photoStatus.textContent = '✔ Done!! (119 KB in 4 sec — somebody upgraded the modem)';
+      }
+    }, 222);
+  }
+  if (photo.complete && photo.naturalWidth > 0) {
+    startPhotoDownload();
+  } else {
+    photo.addEventListener('load', startPhotoDownload);
+    photo.addEventListener('error', function () {
+      photo.style.display = 'none';
+      photo.insertAdjacentHTML('afterend',
+        '<div style="display:grid;place-items:center;height:90px;color:#666;font:11px Verdana;">🖼 the_happy_couple.jpg (0 bytes received)</div>');
+      photoStatus.textContent = '☎ NO CARRIER — photo not uploaded yet!! Check back soon!!';
+    });
+  }
+
+  /* ---------- WEDDING JUKEBOX v2.0 (all public-domain bangers) ---------- */
+  var jb = document.getElementById('jukebox');
+  var jbNp = document.getElementById('jb-np');
+  var jbList = document.getElementById('jb-list');
+  var audioCtx = null, jbTimer = null, playing = false, cur = 0;
+  var N = { D3: 146.83, E3: 164.81, Fs3: 185.00, G3: 196.00, A3: 220.00, B3: 246.94,
+            C4: 261.63, Cs4: 277.18, D4: 293.66, Ds4: 311.13, E4: 329.63, F4: 349.23, Fs4: 369.99,
+            G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33, Ds5: 622.25, E5: 659.25, G5: 783.99 };
+  /* notes: [freq, beats] — approximately, with love */
+  var TRACKS = [
+    { file: 'bridal_chorus_8bit.mid', kb: 14, beat: .42, notes: [
+      [N.C4, 1], [N.F4, .75], [N.F4, .25], [N.F4, 2],
+      [N.C4, 1], [N.G4, .75], [N.E4, .25], [N.F4, 2],
+      [N.C4, 1], [N.F4, .75], [N.F4, .25], [N.F4, 2],
+      [N.C5, 1], [N.A4, .75], [N.F4, .25], [N.G4, 1], [N.F4, 2], [0, 1]] },
+    { file: 'canon_in_d_8bit.mid', kb: 22, beat: .5, notes: [
+      [N.Fs4, 1], [N.E4, 1], [N.D4, 1], [N.Cs4, 1], [N.B3, 1], [N.A3, 1], [N.B3, 1], [N.Cs4, 1],
+      [N.D4, 1], [N.Cs4, 1], [N.B3, 1], [N.A3, 1], [N.G3, 1], [N.Fs3, 1], [N.G3, 1], [N.E3, 1],
+      [N.D3, 2], [0, 1]] },
+    { file: 'wedding_march_8bit.mid', kb: 18, beat: .3, notes: [
+      [N.G4, .5], [N.C5, .25], [N.C5, .25], [N.C5, 1], [N.C5, .5], [N.E5, .25], [N.E5, .25], [N.E5, 1],
+      [N.E5, .5], [N.G5, .25], [N.G5, .25], [N.G5, 1], [N.E5, .5], [N.C5, .5], [N.G4, .5], [N.C5, 2], [0, 1]] },
+    { file: 'ode_2_joy_8bit.mid', kb: 9, beat: .4, notes: [
+      [N.E4, 1], [N.E4, 1], [N.F4, 1], [N.G4, 1], [N.G4, 1], [N.F4, 1], [N.E4, 1], [N.D4, 1],
+      [N.C4, 1], [N.C4, 1], [N.D4, 1], [N.E4, 1], [N.E4, 1.5], [N.D4, .5], [N.D4, 2], [0, 1]] },
+    { file: 'the_entertainer_8bit.mid', kb: 31, beat: .28, notes: [
+      [N.D4, .5], [N.Ds4, .5], [N.E4, .5], [N.C5, 1], [N.E4, .5], [N.C5, 1], [N.E4, .5], [N.C5, 2],
+      [N.C5, .5], [N.D5, .5], [N.Ds5, .5], [N.E5, .5], [N.C5, .5], [N.D5, .5], [N.E5, 1],
+      [N.B4, .5], [N.D5, 1], [N.C5, 2], [0, 1]] }
+  ];
+  TRACKS.forEach(function (t, i) {
+    var li = document.createElement('li');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = (i + 1) + '. ' + t.file + ' (' + t.kb + ' KB)';
+    btn.addEventListener('click', function () { playTrack(i); });
+    li.appendChild(btn);
+    jbList.appendChild(li);
+  });
+  function jbHighlight() {
+    Array.prototype.forEach.call(jbList.children, function (li, i) {
+      li.classList.toggle('sel', i === cur);
+    });
+  }
+  function stopMusic() {
+    playing = false;
+    clearTimeout(jbTimer);
+    jb.classList.remove('playing');
+    jbNp.textContent = '** stopped — pick a jam!! **';
+    if (audioCtx) { audioCtx.close(); audioCtx = null; }
+  }
+  function playTrack(i) {
+    stopMusic();
+    cur = i;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    playing = true;
+    jb.classList.add('playing');
+    jbNp.textContent = '♫ NOW PLAYING: ' + TRACKS[i].file + ' (' + TRACKS[i].kb + ' KB) ♫';
+    jbHighlight();
+    var trk = TRACKS[i];
+    var t = audioCtx.currentTime + 0.05;
+    trk.notes.forEach(function (note) {
+      var freq = note[0], dur = note[1] * trk.beat;
+      if (freq > 0) {
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.045, t);
+        gain.gain.exponentialRampToValueAtTime(0.003, t + dur * 0.92);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + dur * 0.95);
+      }
+      t += dur;
+    });
+    var total = trk.notes.reduce(function (a, n) { return a + n[1]; }, 0) * trk.beat;
+    jbTimer = setTimeout(function () {
+      if (playing) playTrack((cur + 1) % TRACKS.length); /* auto-advance the playlist */
+    }, total * 1000 + 400);
+  }
+  document.getElementById('jb-play').addEventListener('click', function () { playTrack(cur); });
+  document.getElementById('jb-stop').addEventListener('click', function () { stopMusic(); jbHighlight(); });
+  document.getElementById('jb-next').addEventListener('click', function () { playTrack((cur + 1) % TRACKS.length); });
+  document.getElementById('jb-min').addEventListener('click', function () { jb.classList.toggle('min'); });
+  if (window.innerWidth < 1260) jb.classList.add('min'); /* floats over content on narrow screens — start tucked away */
+  jbHighlight();
+
+  /* drag the jukebox around by the title bar, as Winamp intended */
+  var jbBar = jb.querySelector('.jb-titlebar');
+  function jbMoveTo(x, y) {
+    x = Math.min(Math.max(0, x), window.innerWidth - jb.offsetWidth);
+    y = Math.min(Math.max(0, y), window.innerHeight - 40); /* keep the title bar reachable */
+    jb.style.left = x + 'px';
+    jb.style.top = y + 'px';
+    jb.style.right = 'auto';
+    jb.style.bottom = 'auto';
+  }
+  jbBar.addEventListener('pointerdown', function (e) {
+    if (e.target.id === 'jb-min') return;
+    var r = jb.getBoundingClientRect();
+    var dx = e.clientX - r.left, dy = e.clientY - r.top;
+    jbBar.setPointerCapture(e.pointerId);
+    function onMove(ev) { jbMoveTo(ev.clientX - dx, ev.clientY - dy); }
+    function onUp() {
+      jbBar.removeEventListener('pointermove', onMove);
+      jbBar.removeEventListener('pointerup', onUp);
+      lsSet('cjm_jb_pos', { l: jb.offsetLeft, t: jb.offsetTop });
+    }
+    jbBar.addEventListener('pointermove', onMove);
+    jbBar.addEventListener('pointerup', onUp);
+    e.preventDefault();
+  });
+  var jbPos = lsGet('cjm_jb_pos', null);
+  if (jbPos && typeof jbPos.l === 'number') jbMoveTo(jbPos.l, jbPos.t);
+
+  /* ---------- RSVP form ---------- */
+  document.getElementById('rsvp-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('r-name').value.trim() || 'Mystery Guest';
+    var attending = document.querySelector('input[name="r-attend"]:checked').value === 'yes';
+    var rsvps = lsGet('cjm_rsvps', []);
+    rsvps.push({
+      name: name,
+      email: document.getElementById('r-email').value.trim(),
+      attending: attending,
+      party: document.getElementById('r-party').value,
+      meal: document.querySelector('input[name="r-meal"]:checked').value,
+      song: document.getElementById('r-song').value.trim(),
+      boogie: document.getElementById('r-boogie').checked,
+      msg: document.getElementById('r-msg').value.trim(),
+      at: new Date().toISOString()
+    });
+    lsSet('cjm_rsvps', rsvps);
+    var box = document.getElementById('rsvp-confirm');
+    document.getElementById('rsvp-confirm-msg').textContent = attending
+      ? 'WOOHOO!! See you there, ' + name + '!! You are party person #' + rsvps.length + '!!'
+      : 'Aww, ' + name + '. You will be missed!! (CJ’s mom may still call.)';
+    box.classList.add('show');
+    this.reset();
+    box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+  });
+
+  /* ---------- guestbook ---------- */
+  var SEED_ENTRIES = [
+    { name: 'Linda (Mother of the Bride)', from: 'Tucson, AZ', hp: "Linda's Angel Blessings Page", msg: 'I helped make this website. The sparkles were my idea. Love, Mom', date: '01/15/27' },
+    { name: 'xX_b3stm4n_Dave_Xx', from: 'the garage', hp: '', msg: 'first', date: '01/15/27' },
+    { name: 'Aunt Carol', from: 'Sacramento, CA', hp: '', msg: 'How do I make the music stop. Beautiful site. How do I make the music stop.', date: '01/16/27' },
+    { name: 'Webmaster_Greg_1999', from: 'the Information Superhighway', hp: "Greg's HTML Zone", msg: 'Nice use of tables. The marquee is a bold choice. Respect.', date: '01/22/27' },
+    { name: 'CJ & Margaret', from: 'Topanga, CA', hp: 'you are here!!', msg: 'Thanks for stopping by!! Bookmark us (Ctrl+D)!! See you in March!!', date: '02/01/27' }
+  ];
+  function renderGuestbook() {
+    var wrap = document.getElementById('gb-entries');
+    wrap.textContent = '';
+    var all = SEED_ENTRIES.concat(lsGet('cjm_guestbook', []));
+    for (var i = all.length - 1; i >= 0; i--) {
+      var en = all[i];
+      var div = document.createElement('div');
+      div.className = 'gbentry';
+      var meta = document.createElement('div');
+      meta.className = 'gbmeta';
+      meta.textContent = '✏️ ' + en.name + (en.from ? ' · from ' + en.from : '') + ' · ' + en.date;
+      if (en.hp) {
+        var hp = document.createElement('span');
+        hp.className = 'hp';
+        hp.textContent = ' · ' + en.hp;
+        meta.appendChild(hp);
+      }
+      var p = document.createElement('p');
+      p.textContent = en.msg;
+      div.appendChild(meta);
+      div.appendChild(p);
+      wrap.appendChild(div);
+    }
+  }
+  document.getElementById('gb-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var d = new Date();
+    var entries = lsGet('cjm_guestbook', []);
+    entries.push({
+      name: document.getElementById('g-name').value.trim() || 'Anonymous Well-Wisher',
+      from: document.getElementById('g-from').value.trim(),
+      hp: document.getElementById('g-hp').value.trim(),
+      msg: document.getElementById('g-msg').value.trim(),
+      date: pad(d.getMonth() + 1, 2) + '/' + pad(d.getDate(), 2) + '/' + String(d.getFullYear()).slice(2)
+    });
+    lsSet('cjm_guestbook', entries);
+    this.reset();
+    renderGuestbook();
+  });
+  renderGuestbook();
+
+  /* ---------- ASK JEEEVES (pre-recorded answers — real AI coming soon!!) ---------- */
+  var JEEVES_QA = [
+    { match: /rsvp|reply|respond|invit|deadline/i,
+      a: 'Kindly submit your RSVP by February 27, 2027 — the form is right here on this very website. Should you forget, CJ’s mother will telephone you, and I shall be unable to protect you. I am small.' },
+    { match: /wear|dress|attire|outfit|clothes|suit|code/i,
+      a: 'The dress code is “Canyon Formal / 2 Cool 4 School.” Loud colors, flowy layers, a jacket for the canyon night. I shall be wearing my formal collar. If you match the decor (hot pink + gold) you win a prize — I have seen the prize. I tried to eat the prize.' },
+    { match: /stay|hotel|motel|room|sleep|lodg|camp/i,
+      a: 'The room block is at the Starlite Motor Lodge, down on PCH — say “CJ & MARGARET 4EVER” at the desk for the group rate. The Pink Flamingo Inn is down the hill in Malibu and extremely pink. Camping is permitted in Topanga State Park but the canyon is cold at night and I will not be there to warm you.' },
+    { match: /in.?n.?out|burger|midnight|late.?night|truck/i,
+      a: 'CONFIRMED: the In-N-Out truck arrives at MIDNIGHT. This is not a drill. I repeat: this is NOT a drill. I have been promised one (1) plain patty for exemplary butler service. The negotiations were lengthy.' },
+    { match: /when|what time|date|start|schedule/i,
+      a: 'Saturday, March 27, 2027!! Doors at 3:30 PM, ceremony at 4:00 PM sharp, dancing until 11:30 PM. I am told I must not bark during the vows. We shall see.' },
+    { match: /where|venue|location|address|held|place/i,
+      a: 'The Starlite Ballroom in Topanga, California. Turn right at Topanga Canyon Blvd and go up until you hear wind chimes. That is real navigational advice and also my favorite sentence on this entire website.' },
+    { match: /food|eat|dinner|meal|menu|vegetarian|chicken|steak|hungry|cake/i,
+      a: 'Dinner is chicken, steak, or vegetarian — you chose when you RSVP’d (you DID RSVP??). There is also cake, which I am “not allowed” to have. And at midnight: the In-N-Out truck. Ask me about the In-N-Out truck.' },
+    { match: /song|music|dance|dj|band|midi|jukebox|abba/i,
+      a: 'The DJ has been instructed to say yes to every request ending in “…by ABBA.” Until then, please enjoy the WEDDING JUKEBOX on this website — five certified MIDI bangers. Track 2 makes me tilt my head. Both directions.' },
+    { match: /gift|registry|present|money/i,
+      a: 'Your presence is the present!! But the Registry page has the wishlist: a large lava lamp, the honeymoon fund, and “record crate #37” (Margaret says no. CJ says please. I say nothing. I have a tennis ball and plausible deniability.)' },
+    { match: /weather|hot|cold|temperature|rain|sun/i,
+      a: 'March in Topanga: 68°F and golden, possible ocean-fog cameo. Bring a jacket for dancing under the oaks — the canyon gets chilly after dark, and not everyone has this much fur. *gestures with paw at all of this fur*' },
+    { match: /kid|child|children|baby|famil/i,
+      a: 'Children are welcome at the ceremony!! Be advised the dance floor is rated PG-13 after 9 PM due to Uncle Rick’s moves. I have witnessed the moves. My tail stopped wagging for an hour.' },
+    { match: /bar|drink|alcohol|beer|wine|cocktail/i,
+      a: 'The bar is open all evening (the mic is not). Frosty drinks begin at 3:30 PM in the shade. I shall be having a bowl of water: chilled, served neat. The bartender knows me.' },
+    { match: /good (boy|dog)|goodest|best boy/i,
+      a: 'I am. It is me. This has been independently verified by CJ, Margaret, two mail carriers, and a vet tech named Brenda. Thank you for asking the important questions. *tail wag intensifies*' },
+    { match: /dog|puppy|jeeeves|jeeves|who are you|breed|doodle/i,
+      a: 'I am Jeeeves — butler, concierge, ring-bearer-in-training, and (per multiple independent sources) a Very Good Boy. Yes, I will be at the wedding. Yes, you may pet me. Please. You MUST.' },
+    { match: /cat|fleetwood/i,
+      a: 'Ah. Fleetwood. The cat. We have an understanding: the house is his, the yard is mine, and beneath the dinner table is disputed territory. He declined his wedding invitation “on principle.” Typical.' },
+    { match: /photo|picture|camera|camcorder/i,
+      a: 'The ceremony is unplugged — no camcorders!! The photographer has it covered. The Photos page is still downloading via 56k modem; my portrait alone took four hours and I SAT STILL THE ENTIRE TIME.' },
+    { match: /park|drive|airport|fly|travel|get there|direction|far/i,
+      a: 'Fly into LAX, forty minutes away — or Burbank, if you enjoy a calmer airport. Take PCH north, turn right at Topanga Canyon Blvd, follow the wind chimes. Full directions on the Getting There page. I navigate by smell. It took three days.' }
+  ];
+  var JEEVES_FALLBACKS = [
+    'Hmm. I have consulted my archives (a tennis ball, two napkins, and a bone I buried in 2025) and I regret that I do not know. Do try one of the questions below — or ask in the Guestbook. The humans actually read it!!',
+    'An excellent question that I am too small to answer. Might I interest you in one of the questions below instead? Or a stick? I know a great deal about sticks.',
+    'My AI training is not yet complete (I keep eating the flashcards). Please enjoy one of the suggested questions below while my humans finish teaching me the rest!!'
+  ];
+  var JEEVES_SUGGESTIONS = [
+    'What should I wear?',
+    'Where should I stay?',
+    'What time does the ceremony start?',
+    'Can I bring my kids?',
+    'Is the In-N-Out truck real?',
+    'Who is a good boy?'
+  ];
+  var jvInput = document.getElementById('jeeves-q');
+  var jvResults = document.getElementById('jeeves-results');
+  var jvQ = document.getElementById('jr-q');
+  var jvA = document.getElementById('jr-a');
+  var jvFallback = 0, jvThinkTimer = null, jvTypeTimer = null;
+  function jeevesAnswer(q) {
+    for (var i = 0; i < JEEVES_QA.length; i++) {
+      if (JEEVES_QA[i].match.test(q)) return JEEVES_QA[i].a;
+    }
+    return JEEVES_FALLBACKS[jvFallback++ % JEEVES_FALLBACKS.length];
+  }
+  /* stream the answer word-by-word with a blinking cursor, like the fancy AI chatbots do */
+  function typeAnswer(text) {
+    var cursor = document.createElement('span');
+    cursor.className = 'jr-cursor';
+    jvA.textContent = '';
+    jvA.appendChild(cursor);
+    var pos = 0;
+    (function chunk() {
+      if (pos >= text.length) { cursor.remove(); return; }
+      var next = text.indexOf(' ', pos + 1);
+      if (next === -1) next = text.length;
+      cursor.before(document.createTextNode(text.slice(pos, next)));
+      pos = next;
+      jvTypeTimer = setTimeout(chunk, 25 + Math.random() * 95);
+    })();
+  }
+  function askJeeves(q) {
+    q = q.trim() || 'Who is a good boy?';
+    jvQ.textContent = q;
+    jvResults.classList.add('show');
+    clearInterval(jvThinkTimer);
+    clearTimeout(jvTypeTimer);
+    jvA.textContent = '🐾 Jeeeves is fetching your answer 🦴';
+    var dots = 0;
+    jvThinkTimer = setInterval(function () {
+      dots++;
+      if (dots < 3) { jvA.textContent += ' 🦴'; return; }
+      clearInterval(jvThinkTimer);
+      typeAnswer(jeevesAnswer(q));
+    }, 420);
+    jvResults.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+  }
+  document.getElementById('jeeves-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    askJeeves(jvInput.value);
+  });
+  var jvSug = document.getElementById('jeeves-suggestions');
+  JEEVES_SUGGESTIONS.forEach(function (q) {
+    var a = document.createElement('a');
+    a.href = '#askjeeves';
+    a.textContent = '» ' + q;
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      jvInput.value = q;
+      askJeeves(q);
+    });
+    jvSug.appendChild(a);
+  });
+
+  /* ---------- webring ---------- */
+  var WR_LINES = [
+    '404: the rest of the webring retired in 2009. The love remains.',
+    'You are already on the best site in the ring. Stay awhile!!',
+    'RANDOM selected: this site again. The ring has spoken.'
+  ];
+  ['wr-prev', 'wr-rand', 'wr-next'].forEach(function (id, i) {
+    document.getElementById(id).addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('wr-msg').textContent = WR_LINES[i];
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 480" role="img" aria-label="Jeeeves the doodle dog illustrated as a butler: pinstripe suit, red tie, one paw extended">
+  <!-- flat retro mascot in the style of the classic Ask Jeeves butler -->
+  <defs>
+    <clipPath id="suitClip">
+      <path d="M 124 226 Q 180 204 236 226 Q 252 233 254 252 L 262 344 Q 263 356 250 356 L 110 356 Q 97 356 98 344 L 106 252 Q 108 233 124 226 Z"/>
+      <path d="M 116 352 L 244 352 L 240 438 Q 239.5 444 233 444 L 197 444 Q 191 444 190.5 438 L 186 398 Q 184 390 180 390 Q 176 390 174 398 L 169.5 438 Q 169 444 163 444 L 127 444 Q 120.5 444 120 438 Z"/>
+    </clipPath>
+  </defs>
+
+  <g stroke="#2A211A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+
+    <!-- ground shadow -->
+    <ellipse cx="184" cy="468" rx="98" ry="8" fill="#DCD5C6" stroke="none"/>
+
+    <!-- tail (pokes out from under the jacket hem) -->
+    <path fill="#D89B60" d="M 107.4 344.1 A 13.5 13.5 0 0 1 113.1 359.8 A 19.1 19.1 0 0 1 105.1 382.1 A 20.8 20.8 0 0 1 87.3 400.7 A 16.4 16.4 0 0 1 67.9 406.8 A 12.1 12.1 0 0 1 56.1 397.5 A 16.4 16.4 0 0 1 57.3 377.2 A 20.8 20.8 0 0 1 71.0 355.5 A 19.1 19.1 0 0 1 90.8 342.4 A 13.5 13.5 0 0 1 107.4 344.1 Z"/>
+
+    <!-- head group (ears behind head, face on top) -->
+    <g transform="translate(0 12)">
+      <path fill="#CC8B4F" d="M 118.0 89.8 A 19.9 19.9 0 0 1 135.7 109.2 A 29.2 29.2 0 0 1 138.1 147.7 A 31.8 31.8 0 0 1 124.1 187.2 A 24.7 24.7 0 0 1 100.2 209.3 A 17.6 17.6 0 0 1 77.6 203.7 A 24.7 24.7 0 0 1 66.9 173.0 A 31.8 31.8 0 0 1 73.1 131.5 A 29.2 29.2 0 0 1 93.3 98.6 A 19.9 19.9 0 0 1 118.0 89.8 Z"/>
+      <path fill="#CC8B4F" d="M 242.0 89.8 A 19.9 19.9 0 0 1 266.7 98.6 A 29.2 29.2 0 0 1 286.9 131.5 A 31.8 31.8 0 0 1 293.1 173.0 A 24.7 24.7 0 0 1 282.4 203.7 A 17.6 17.6 0 0 1 259.8 209.3 A 24.7 24.7 0 0 1 235.9 187.2 A 31.8 31.8 0 0 1 221.9 147.7 A 29.2 29.2 0 0 1 224.3 109.2 A 19.9 19.9 0 0 1 242.0 89.8 Z"/>
+      <path fill="#D89B60" d="M 180.0 38.0 A 29.5 29.5 0 0 1 219.0 47.2 A 29.0 29.0 0 0 1 249.1 72.6 A 28.3 28.3 0 0 1 263.4 108.4 A 28.2 28.2 0 0 1 258.5 146.4 A 28.6 28.6 0 0 1 235.7 177.9 A 29.3 29.3 0 0 1 200.1 195.7 A 29.6 29.6 0 0 1 159.9 195.7 A 29.3 29.3 0 0 1 124.3 177.9 A 28.6 28.6 0 0 1 101.5 146.4 A 28.2 28.2 0 0 1 96.6 108.4 A 28.3 28.3 0 0 1 110.9 72.6 A 29.0 29.0 0 0 1 141.0 47.2 A 29.5 29.5 0 0 1 180.0 38.0 Z"/>
+      <!-- curl hints -->
+      <path fill="none" stroke="#C58449" stroke-width="3" d="M 140 82 q 8 -10 17 -3"/>
+      <path fill="none" stroke="#C58449" stroke-width="3" d="M 198 60 q 9 -8 17 0"/>
+      <path fill="none" stroke="#C58449" stroke-width="3" d="M 233 100 q 9 -7 15 1"/>
+      <!-- white muzzle -->
+      <path fill="#F7F1E4" d="M 180.0 114.0 A 19.4 19.4 0 0 1 207.0 121.3 A 17.6 17.6 0 0 1 223.7 140.3 A 16.3 16.3 0 0 1 223.7 163.7 A 17.6 17.6 0 0 1 207.0 182.7 A 19.4 19.4 0 0 1 180.0 190.0 A 19.4 19.4 0 0 1 153.0 182.7 A 17.6 17.6 0 0 1 136.3 163.7 A 16.3 16.3 0 0 1 136.3 140.3 A 17.6 17.6 0 0 1 153.0 121.3 A 19.4 19.4 0 0 1 180.0 114.0 Z"/>
+      <!-- eyes -->
+      <circle cx="146" cy="102" r="10.5" fill="#35251C" stroke-width="2.5"/>
+      <circle cx="214" cy="102" r="10.5" fill="#35251C" stroke-width="2.5"/>
+      <circle cx="142.5" cy="98" r="3" fill="#FFFFFF" stroke="none"/>
+      <circle cx="210.5" cy="98" r="3" fill="#FFFFFF" stroke="none"/>
+      <!-- nose, philtrum, happy open mouth -->
+      <path fill="#241A14" stroke-width="2.5" d="M 180 126 Q 195 126 195 137 Q 195 148 180 153 Q 165 148 165 137 Q 165 126 180 126 Z"/>
+      <path fill="none" stroke-width="3" d="M 180 153 L 180 161"/>
+      <path fill="#3A241C" stroke-width="3" d="M 163 161 Q 180 170 197 161 Q 194 184 180 184 Q 166 184 163 161 Z"/>
+      <path fill="#E2848E" stroke-width="2.5" d="M 171 172 Q 180 168 189 172 Q 189 183 180 184 Q 171 183 171 172 Z"/>
+    </g>
+
+    <!-- suit: torso + trousers -->
+    <path fill="#45434E" d="M 124 226 Q 180 204 236 226 Q 252 233 254 252 L 262 344 Q 263 356 250 356 L 110 356 Q 97 356 98 344 L 106 252 Q 108 233 124 226 Z"/>
+    <path fill="#45434E" d="M 116 352 L 244 352 L 240 438 Q 239.5 444 233 444 L 197 444 Q 191 444 190.5 438 L 186 398 Q 184 390 180 390 Q 176 390 174 398 L 169.5 438 Q 169 444 163 444 L 127 444 Q 120.5 444 120 438 Z"/>
+    <!-- pinstripes -->
+    <g clip-path="url(#suitClip)" stroke="#71707E" stroke-width="1.8" stroke-linecap="butt">
+      <path d="M 110 200 V 450"/><path d="M 123 200 V 450"/><path d="M 136 200 V 450"/>
+      <path d="M 149 200 V 450"/><path d="M 162 200 V 450"/><path d="M 175 200 V 450"/>
+      <path d="M 188 200 V 450"/><path d="M 201 200 V 450"/><path d="M 214 200 V 450"/>
+      <path d="M 227 200 V 450"/><path d="M 240 200 V 450"/><path d="M 253 200 V 450"/>
+    </g>
+    <!-- jacket hem line -->
+    <path fill="none" d="M 104 352 L 256 352" stroke-width="3"/>
+
+    <!-- shirt, collar, tie -->
+    <path fill="#FFFFFF" stroke-width="3" d="M 158 224 L 202 224 L 197 292 Q 180 301 163 292 Z"/>
+    <path fill="#FFFFFF" stroke-width="2.5" d="M 156 222 L 179 228 L 165 244 Z"/>
+    <path fill="#FFFFFF" stroke-width="2.5" d="M 204 222 L 181 228 L 195 244 Z"/>
+    <path fill="#B3251F" stroke-width="2.5" d="M 172 244 L 188 244 L 186 296 Q 180 303 174 296 Z"/>
+    <path fill="#971D18" stroke-width="2.5" d="M 180 226 L 192 236 L 180 246 L 168 236 Z"/>
+    <!-- lapels -->
+    <path fill="#38363F" stroke-width="3" d="M 152 223 L 178 229 L 158 293 L 147 255 Z"/>
+    <path fill="#38363F" stroke-width="3" d="M 208 223 L 182 229 L 202 293 L 213 255 Z"/>
+    <!-- jacket buttons -->
+    <circle cx="180" cy="320" r="3.2" fill="#23201D" stroke="none"/>
+    <circle cx="180" cy="338" r="3.2" fill="#23201D" stroke="none"/>
+
+    <!-- left arm: short bend, paw gripping the lapel -->
+    <path fill="#3D3B46" d="M 126 228 Q 110 240 111 262 L 117 278 L 147 268 Q 137 254 139 240 Z"/>
+    <path fill="#D89B60" stroke-width="3" d="M 153.5 234.3 A 12.6 12.6 0 0 1 167.8 242.8 A 11.8 11.8 0 0 1 171.7 257.8 A 11.8 11.8 0 0 1 162.9 270.6 A 12.6 12.6 0 0 1 146.5 273.7 A 12.6 12.6 0 0 1 132.2 265.2 A 11.8 11.8 0 0 1 128.3 250.2 A 11.8 11.8 0 0 1 137.1 237.4 A 12.6 12.6 0 0 1 153.5 234.3 Z"/>
+
+    <!-- right arm: extended, palm-up "at your service" -->
+    <path fill="#3D3B46" d="M 232 228 Q 264 228 291 245 L 302 253 L 292 279 Q 264 269 240 264 Z"/>
+    <path fill="#D89B60" stroke-width="3" d="M 306.3 240.7 A 14.8 14.8 0 0 1 325.7 242.2 A 13.1 13.1 0 0 1 337.1 255.3 A 13.1 13.1 0 0 1 333.8 272.3 A 14.8 14.8 0 0 1 317.7 283.3 A 14.8 14.8 0 0 1 298.3 281.8 A 13.1 13.1 0 0 1 286.9 268.7 A 13.1 13.1 0 0 1 290.2 251.7 A 14.8 14.8 0 0 1 306.3 240.7 Z"/>
+
+    <!-- fluffy feet -->
+    <path fill="#D89B60" stroke-width="3" d="M 150.0 429.0 A 16.7 16.7 0 0 1 171.2 434.9 A 12.6 12.6 0 0 1 180.0 449.0 A 12.6 12.6 0 0 1 171.2 463.1 A 16.7 16.7 0 0 1 150.0 469.0 A 16.7 16.7 0 0 1 128.8 463.1 A 12.6 12.6 0 0 1 120.0 449.0 A 12.6 12.6 0 0 1 128.8 434.9 A 16.7 16.7 0 0 1 150.0 429.0 Z"/>
+    <path fill="#D89B60" stroke-width="3" d="M 212.0 429.0 A 16.7 16.7 0 0 1 233.2 434.9 A 12.6 12.6 0 0 1 242.0 449.0 A 12.6 12.6 0 0 1 233.2 463.1 A 16.7 16.7 0 0 1 212.0 469.0 A 16.7 16.7 0 0 1 190.8 463.1 A 12.6 12.6 0 0 1 182.0 449.0 A 12.6 12.6 0 0 1 190.8 434.9 A 16.7 16.7 0 0 1 212.0 429.0 Z"/>
+  </g>
+</svg>
