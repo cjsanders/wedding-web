@@ -203,6 +203,7 @@
     text-align: center;
     font-weight: bold;
   }
+  .construction .wx-live { border-top: 2px dashed #b58900; margin-top: 8px; padding-top: 8px; }
 
   table.datagrid {
     margin: 8px auto;
@@ -808,7 +809,18 @@
 
       <h3>⚠ Weather advisory ⚠</h3>
       <div class="construction">🌤 It is MARCH in TOPANGA. 🌤<br>
-      <span class="small">Forecast: 68°F, golden canyon light, possible dramatic ocean-fog cameo. Bring a jacket for dancing under the oaks — the canyon gets chilly after dark!!</span></div>
+      <span class="small">Forecast: 68°F, golden canyon light, possible dramatic ocean-fog cameo. Bring a jacket for dancing under the oaks — the canyon gets chilly after dark!!</span>
+        <div class="wx-live" id="wx-live" hidden>
+          📡 <span class="lime">CANYON DOPPLER 2000™</span> — LIVE in Topanga right now:<br>
+          <span id="wx-now">…</span><br>
+          <span class="small" id="wx-today"></span>
+        </div>
+        <div class="wx-live" id="wx-future" hidden>
+          🔮 <span class="pink">FUTURECAST 2027™</span> — we made 4 climate supercomputers simulate our wedding day:<br>
+          <span id="wx-future-txt">…</span><br>
+          <span class="small">(Real forecasts stop at 16 days. This is CMIP6 climate models dreaming about 03/27/2027 ± a week. The jacket advice stands.)</span>
+        </div>
+      </div>
     </section>
 
     <!-- ============ PHOTOS ============ -->
@@ -1467,6 +1479,51 @@
     });
     jvSug.appendChild(a);
   });
+
+  /* ---------- live canyon doppler (Open-Meteo — free, no key) ---------- */
+  (function () {
+    var live = document.getElementById('wx-live');
+    if (!live || !window.fetch) return;
+    var WMO = { 0:'☀ Clear skies', 1:'🌤 Mostly clear', 2:'⛅ Partly cloudy', 3:'☁ Overcast',
+      45:'🌫 Canyon fog', 48:'🌫 Canyon fog', 51:'🌦 Drizzle', 53:'🌦 Drizzle', 55:'🌦 Drizzle',
+      61:'🌧 Rain', 63:'🌧 Rain', 65:'🌧 HEAVY rain', 80:'🌦 Showers', 81:'🌦 Showers',
+      82:'⛈ Downpour', 71:'🌨 SNOW?!', 73:'🌨 SNOW?!', 75:'🌨 SNOW?!',
+      95:'⛈ Thunderstorm', 96:'⛈ Thunderstorm', 99:'⛈ Thunderstorm' };
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=34.0937&longitude=-118.6015&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FLos_Angeles&forecast_days=1')
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (d) {
+        var c = d.current;
+        document.getElementById('wx-now').textContent =
+          (WMO[c.weather_code] || '🌈 Unidentified weather') + ' · ' + Math.round(c.temperature_2m) + '°F' +
+          ' (feels like ' + Math.round(c.apparent_temperature) + '°F) · wind ' + Math.round(c.wind_speed_10m) + ' mph';
+        document.getElementById('wx-today').textContent =
+          'Today: high ' + Math.round(d.daily.temperature_2m_max[0]) + '°F / low ' + Math.round(d.daily.temperature_2m_min[0]) + '°F. Updates when you refresh, like it\'s 1999.';
+        live.hidden = false;
+      })
+      .catch(function () {}); /* offline or blocked: the vibes forecast above still applies */
+  })();
+
+  /* ---------- futurecast: CMIP6 climate-model projection of the big day ---------- */
+  (function () {
+    var fc = document.getElementById('wx-future');
+    if (!fc || !window.fetch) return;
+    fetch('https://climate-api.open-meteo.com/v1/climate?latitude=34.0937&longitude=-118.6015&start_date=2027-03-20&end_date=2027-04-03&models=EC_Earth3P_HR,MRI_AGCM3_2_S,NICAM16_8S,CMCC_CM2_VHR4&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&temperature_unit=fahrenheit&precipitation_unit=inch')
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (d) {
+        var hi = [], lo = [], wet = 0, days = 0;
+        Object.keys(d.daily).forEach(function (k) {
+          var v = d.daily[k];
+          if (k.indexOf('temperature_2m_max') === 0) hi = hi.concat(v);
+          if (k.indexOf('temperature_2m_min') === 0) lo = lo.concat(v);
+          if (k.indexOf('precipitation_sum') === 0) v.forEach(function (p) { if (typeof p === 'number') { days++; if (p >= 0.01) wet++; } });
+        });
+        function avg(a) { var s = 0, c = 0; a.forEach(function (x) { if (typeof x === 'number') { s += x; c++; } }); return Math.round(s / c); }
+        document.getElementById('wx-future-txt').textContent =
+          'Consensus: high ~' + avg(hi) + '°F / low ~' + avg(lo) + '°F · ' + Math.round(100 * wet / days) + '% chance of rain on any given day that week.';
+        fc.hidden = false;
+      })
+      .catch(function () {}); /* the models are shy today */
+  })();
 
   /* ---------- webring ---------- */
   var WR_LINES = [
