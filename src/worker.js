@@ -143,11 +143,26 @@ async function handleApi(request, env, path, role) {
 
     if (path === '/api/guestbook' && request.method === 'GET') {
       const { results } = await env.DB
-        .prepare('SELECT name, from_where, homepage, msg, created_at FROM guestbook ORDER BY id ASC LIMIT 500')
+        .prepare('SELECT id, name, from_where, homepage, msg, created_at FROM guestbook ORDER BY id ASC LIMIT 500')
         .all();
       return json({
-        entries: results.map((r) => ({ name: r.name, from: r.from_where, hp: r.homepage, msg: r.msg, at: r.created_at })),
+        entries: results.map((r) => ({ id: r.id, name: r.name, from: r.from_where, hp: r.homepage, msg: r.msg, at: r.created_at })),
       });
+    }
+
+    if (path === '/api/admin/rsvps' && request.method === 'GET') {
+      if (role !== 'admin') return json({ error: 'management only!!' }, 403);
+      const { results } = await env.DB
+        .prepare('SELECT id, name, email, attending, party, meal, song, boogie, msg, created_at FROM rsvps ORDER BY id DESC')
+        .all();
+      return json({ rsvps: results });
+    }
+
+    const gbDel = path.match(/^\/api\/admin\/guestbook\/(\d+)$/);
+    if (gbDel && request.method === 'DELETE') {
+      if (role !== 'admin') return json({ error: 'management only!!' }, 403);
+      await env.DB.prepare('DELETE FROM guestbook WHERE id = ?').bind(Number(gbDel[1])).run();
+      return json({ ok: true });
     }
 
     if (path === '/api/guestbook' && request.method === 'POST') {
