@@ -27,6 +27,7 @@ npx wrangler d1 create wedding        # copy the database_id it prints
 npm run db:remote                     # create tables in production D1
 npx wrangler secret put SITE_PASSWORD # the password that goes on the invitations
 npx wrangler secret put AUTH_SECRET   # any long random string, e.g. `openssl rand -hex 32`
+npx wrangler secret put ANTHROPIC_API_KEY # from console.anthropic.com — powers Ask Jeeeves
 npm run deploy
 ```
 
@@ -50,7 +51,10 @@ npx wrangler d1 execute wedding --remote --command "DELETE FROM guestbook WHERE 
 ## Notes
 
 - Changing `AUTH_SECRET` logs every guest out (they just re-enter the password).
-- Ask Jeeeves answers are still pre-recorded in the frontend; the future real-AI
-  hookup point is `jeevesAnswer()` in `public/index.html` → a `/api/jeeves` route.
+- Ask Jeeeves is real AI: `/api/jeeves` calls Claude (`JEEVES_MODEL` in
+  `src/worker.js`) with a persona + site-canon fact sheet (`JEEVES_SYSTEM`).
+  If the wedding details change, update that fact sheet too. Without an
+  `ANTHROPIC_API_KEY` (or on any API error) the frontend falls back to the
+  pre-recorded answers in `public/index.html`, so Jeeeves never goes silent.
 - Both forms have a hidden "fax number" honeypot; submissions that fill it are
   silently discarded.
