@@ -817,7 +817,7 @@
       <button type="button" id="jb-stop" aria-label="Stop">■</button>
       <button type="button" id="jb-next" aria-label="Next track">⏭</button>
     </div>
-    <div class="jb-note">100% REAL MIDI* (*track 1 is a genuine .mid — we parse it by hand · the rest are square waves) · music follows you page 2 page, as GeoCities intended</div>
+    <div class="jb-note">100% REAL MIDI* (*track 1 is a genuine .mid thru a genuine wavetable synth · the rest are square waves) · music follows you page 2 page, as GeoCities intended</div>
   </div>
 </aside>
 
@@ -1539,15 +1539,16 @@
   var jb = document.getElementById('jukebox');
   var jbNp = document.getElementById('jb-np');
   var jbList = document.getElementById('jb-list');
-  var audioCtx = null, jbTimer = null, midiTimer = null, midiCache = {}, playing = false, cur = 0;
+  var audioCtx = null, jbTimer = null, midiSynth = null, midiCache = {}, playing = false, cur = 0;
   var N = { D3: 146.83, E3: 164.81, Fs3: 185.00, G3: 196.00, A3: 220.00, B3: 246.94,
             C4: 261.63, Cs4: 277.18, D4: 293.66, Ds4: 311.13, E4: 329.63, F4: 349.23, Fs4: 369.99,
             G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33, Ds5: 622.25, E5: 659.25, G5: 783.99,
             Fs5: 739.99, Gs5: 830.61, A5: 880.00, B5: 987.77, Cs6: 1108.73 };
   /* notes: [freq, beats] — approximately, with love */
   var TRACKS = [
-    /* the actual file (seq. by HONEY orlandi, 1997), served from public/ and played by the
-       MIDI engine below. notes: hand-transcribed backup in case the download flops */
+    /* the actual file (seq. by HONEY orlandi, 1997), played thru FluidSynth + the classic
+       GS wavetable (see REAL MIDI ENGINE below). notes: hand-transcribed backup in case
+       the downloads flop */
     { file: 'titanic-8.mid', kb: 33, url: 'titanic-8.mid', beat: .55, notes: [
       [N.E5, .5], [N.Fs5, .5], [N.Fs5, .5], [N.Gs5, 2.5],
       [N.Fs5, .5], [N.E5, .5], [N.Fs5, .5], [N.B5, 2.5],
@@ -1593,7 +1594,7 @@
   function stopMusic() {
     playing = false;
     clearTimeout(jbTimer);
-    clearInterval(midiTimer);
+    if (midiSynth) { var ms = midiSynth; midiSynth = null; try { ms.stopPlayer(); ms.close(); } catch (e) {} }
     jb.classList.remove('playing');
     jbNp.textContent = '** stopped — pick a jam!! **';
     if (audioCtx) { audioCtx.close(); audioCtx = null; }
@@ -1634,134 +1635,64 @@
     }, total * 1000 + 400);
   }
 
-  /* ---------- REAL MIDI ENGINE (plays actual .mid files — no plugins, no Crescendo) ---------- */
-  function parseMidi(buf) {
-    var u8 = new Uint8Array(buf), p = 0;
-    function u32() { var v = (u8[p] << 24) | (u8[p + 1] << 16) | (u8[p + 2] << 8) | u8[p + 3]; p += 4; return v >>> 0; }
-    function u16() { var v = (u8[p] << 8) | u8[p + 1]; p += 2; return v; }
-    function varlen() { var v = 0, b; do { b = u8[p++]; v = (v << 7) | (b & 0x7f); } while (b & 0x80); return v; }
-    if (u32() !== 0x4d546864) throw new Error('that is not a MIDI file!!');
-    p += 4; u16(); /* header length (6), format */
-    var ntrk = u16(), div = u16();
-    var raw = [];
-    for (var trkI = 0; trkI < ntrk; trkI++) {
-      if (u32() !== 0x4d54726b) throw new Error('bad track');
-      var tend = p + u32(), tick = 0, run = 0;
-      while (p < tend) {
-        tick += varlen();
-        var s = u8[p];
-        if (s & 0x80) { p++; if (s < 0xf0) run = s; } else { s = run; }
-        if (s === 0xff) {
-          var mt = u8[p++], ml = varlen();
-          if (mt === 0x51) raw.push({ tick: tick, k: 't', us: (u8[p] << 16) | (u8[p + 1] << 8) | u8[p + 2] });
-          p += ml;
-        } else if (s === 0xf0 || s === 0xf7) { p += varlen(); }
-        else {
-          var ev = s & 0xf0, ch = s & 0x0f;
-          if (ev === 0xc0 || ev === 0xd0) { var pa = u8[p++]; if (ev === 0xc0) raw.push({ tick: tick, k: 'p', ch: ch, a: pa }); }
-          else {
-            var a = u8[p++], b = u8[p++];
-            if (ev === 0x90 && b > 0) raw.push({ tick: tick, k: 'on', ch: ch, n: a, v: b });
-            else if (ev === 0x80 || ev === 0x90) raw.push({ tick: tick, k: 'off', ch: ch, n: a });
-            else if (ev === 0xb0 && a === 7) raw.push({ tick: tick, k: 'vol', ch: ch, v: b });
-          }
-        }
-      }
-      p = tend;
-    }
-    raw.sort(function (x, y) { return x.tick - y.tick; });
-    /* walk the tempo map, pair note-ons with note-offs */
-    var usq = 500000, lastTick = 0, sec = 0, held = {}, chVol = [], prog = [], notes = [];
-    for (var c = 0; c < 16; c++) { chVol[c] = 100; prog[c] = 0; }
-    raw.forEach(function (e) {
-      sec += (e.tick - lastTick) * usq / 1e6 / div; lastTick = e.tick;
-      if (e.k === 't') usq = e.us;
-      else if (e.k === 'vol') chVol[e.ch] = e.v;
-      else if (e.k === 'p') prog[e.ch] = e.a;
-      else if (e.k === 'on') held[e.ch * 128 + e.n] = { t: sec, v: e.v, mix: chVol[e.ch], prog: prog[e.ch] };
-      else if (e.k === 'off') {
-        var h = held[e.ch * 128 + e.n];
-        if (h) { notes.push({ t: h.t, d: Math.max(.06, sec - h.t), ch: e.ch, n: e.n, v: h.v, mix: h.mix, prog: h.prog }); delete held[e.ch * 128 + e.n]; }
-      }
+  /* ---------- REAL MIDI ENGINE: FluidSynth (WASM) + the classic GS wavetable ----------
+     lib/libfluidsynth-2.4.6.js + lib/js-synthesizer.min.js + lib/gm.sf2 (the Windows
+     "Microsoft GS Wavetable" instrument set — i.e. exactly what titanic-8.mid sounded
+     like on the family computer in 1998). all lazy-loaded on first play. */
+  function loadScriptOnce(src) {
+    midiCache[src] = midiCache[src] || new Promise(function (ok, no) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = ok;
+      s.onerror = function () { delete midiCache[src]; no(new Error(src + ' failed to load')); };
+      document.head.appendChild(s);
     });
-    notes.sort(function (x, y) { return x.t - y.t; });
-    return { notes: notes, dur: sec };
+    return midiCache[src];
   }
-  function midiVoice(n, when, out, noise) {
-    /* channel 9 = drums (noise + thumps). everything else: the finest waveforms of 1997 */
-    var t = when + n.t, amp = (n.v / 127) * (n.mix / 127);
-    var g = audioCtx.createGain();
-    g.connect(out);
-    if (n.ch === 9) {
-      if (n.n === 35 || n.n === 36) { /* kick: a little triangle thump */
-        var ko = audioCtx.createOscillator();
-        ko.type = 'triangle';
-        ko.frequency.setValueAtTime(110, t);
-        ko.frequency.exponentialRampToValueAtTime(45, t + .09);
-        g.gain.setValueAtTime(amp * .9, t);
-        g.gain.exponentialRampToValueAtTime(.001, t + .11);
-        ko.connect(g); ko.start(t); ko.stop(t + .12);
-      } else {
-        var src = audioCtx.createBufferSource();
-        src.buffer = noise;
-        var f = audioCtx.createBiquadFilter();
-        var snare = n.n === 38 || n.n === 40;
-        f.type = 'highpass';
-        f.frequency.value = snare ? 1800 : 6500;
-        var dur = snare ? .1 : (n.n === 49 || n.n === 57 ? .3 : .04); /* crashes ring a little longer */
-        g.gain.setValueAtTime(amp * (snare ? .5 : .3), t);
-        g.gain.exponentialRampToValueAtTime(.001, t + dur);
-        src.connect(f).connect(g); src.start(t); src.stop(t + dur + .01);
-      }
-      return;
-    }
-    var o = audioCtx.createOscillator();
-    o.type = n.prog >= 32 && n.prog <= 39 ? 'triangle' /* bass */
-           : (n.prog >= 40 && n.prog <= 54) || (n.prog >= 88 && n.prog <= 95) ? 'sawtooth' /* strings + pads */
-           : 'square';
-    o.frequency.value = 440 * Math.pow(2, (n.n - 69) / 12);
-    var peak = amp * (o.type === 'square' ? .055 : .04);
-    g.gain.setValueAtTime(.0001, t);
-    g.gain.linearRampToValueAtTime(peak, t + .015);
-    g.gain.setValueAtTime(peak, t + Math.max(.02, n.d * .3));
-    g.gain.exponentialRampToValueAtTime(.001, t + n.d);
-    o.connect(g); o.start(t); o.stop(t + n.d + .02);
+  function fetchOnce(url) {
+    midiCache[url] = midiCache[url] || fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status + ' for ' + url);
+      return r.arrayBuffer();
+    }).catch(function (e) { delete midiCache[url]; throw e; });
+    return midiCache[url];
   }
   function playRealMidi(trk, i) {
-    jbNp.textContent = '♫ downloading ' + trk.file + ' (' + trk.kb + ' KB @ 56k)…';
-    var want = audioCtx; /* if the user stops or switches tracks mid-download, this ctx is dead */
-    var loaded = midiCache[trk.url]
-      ? Promise.resolve(midiCache[trk.url])
-      : fetch(trk.url).then(function (r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.arrayBuffer();
-        }).then(function (buf) { return (midiCache[trk.url] = parseMidi(buf)); });
-    loaded.then(function (song) {
-      if (!playing || audioCtx !== want || cur !== i) return;
-      jbNp.textContent = '♫ NOW PLAYING: ' + trk.file + ' (' + trk.kb + ' KB) ♫';
-      /* master chain: gentle squash so 22 simultaneous voices don't blow out the speakers */
-      var comp = audioCtx.createDynamicsCompressor();
-      var master = audioCtx.createGain();
-      master.gain.value = .5;
-      master.connect(comp).connect(audioCtx.destination);
-      var noise = audioCtx.createBuffer(1, audioCtx.sampleRate * .35 | 0, audioCtx.sampleRate);
-      var nd = noise.getChannelData(0);
-      for (var s = 0; s < nd.length; s++) nd[s] = Math.random() * 2 - 1;
-      var start = audioCtx.currentTime + .15, idx = 0;
-      function pump() { /* schedule the next second of notes; repeat until the ship goes down */
-        var horizon = audioCtx.currentTime - start + 1;
-        while (idx < song.notes.length && song.notes[idx].t < horizon) midiVoice(song.notes[idx++], start, master, noise);
-      }
-      pump();
-      midiTimer = setInterval(pump, 250);
-      jbTimer = setTimeout(function () {
-        if (playing) playTrack((cur + 1) % TRACKS.length); /* auto-advance the playlist */
-      }, (song.dur + 1.5) * 1000);
-    }).catch(function () {
-      if (!playing || audioCtx !== want || cur !== i) return;
-      jbNp.textContent = '⚠ download flopped!! playing the backup ringtone version';
-      playChipNotes(trk); /* the hand-transcribed fallback */
-    });
+    var want = audioCtx; /* if the user stops or switches tracks mid-load, this ctx is dead */
+    function alive() { return playing && audioCtx === want && cur === i; }
+    jbNp.textContent = '♫ loading SYNTHESIZER.EXE…';
+    loadScriptOnce('lib/libfluidsynth-2.4.6.js')
+      .then(function () { return loadScriptOnce('lib/js-synthesizer.min.js'); })
+      .then(function () { return JSSynth.waitForReady(); })
+      .then(function () {
+        if (alive()) jbNp.textContent = '♫ downloading instruments (3 MB!! hang in there, 56k friends)…';
+        return Promise.all([fetchOnce('lib/gm.sf2'), fetchOnce(trk.url)]);
+      })
+      .then(function (bufs) {
+        if (!alive()) return;
+        var synth = new JSSynth.Synthesizer();
+        synth.init(audioCtx.sampleRate);
+        synth.createAudioNode(audioCtx, 8192).connect(audioCtx.destination);
+        midiSynth = synth;
+        return synth.loadSFont(bufs[0])
+          .then(function () { return synth.addSMFDataToPlayer(bufs[1]); })
+          .then(function () {
+            if (!alive()) return;
+            jbNp.textContent = '♫ NOW PLAYING: ' + trk.file + ' (' + trk.kb + ' KB) ♫';
+            return synth.playPlayer();
+          })
+          .then(function () { return synth.waitForPlayerStopped(); })
+          .then(function () {
+            if (!alive()) return;
+            jbTimer = setTimeout(function () {
+              if (playing) playTrack((cur + 1) % TRACKS.length); /* auto-advance the playlist */
+            }, 1200); /* let the last chord ring out */
+          });
+      })
+      .catch(function () {
+        if (!alive()) return;
+        jbNp.textContent = '⚠ synth loading flopped!! playing the backup ringtone version';
+        playChipNotes(trk); /* the hand-transcribed fallback */
+      });
   }
   document.getElementById('jb-play').addEventListener('click', function () { playTrack(cur); });
   document.getElementById('jb-stop').addEventListener('click', function () { stopMusic(); jbHighlight(); });
@@ -1920,7 +1851,7 @@
     { match: /in.?n.?out|burger|midnight|late.?night|truck/i,
       a: 'CONFIRMED: the In-N-Out truck arrives at MIDNIGHT. This is not a drill. I repeat: this is NOT a drill. I have been promised one (1) plain patty for exemplary butler service. The negotiations were lengthy.' },
     { match: /when|what time|date|start|schedule/i,
-      a: 'Saturday, March 27, 2027!! Doors at 3:30 PM, ceremony at 4:00 PM sharp, dancing until 11:30 PM. I am told I must not bark during the vows. We shall see.' },
+      a: 'Saturday, March 27, 2027!! Ceremony at 4:00 PM sharp, cocktail hour in the golden light right after, dinner at 6:00, dancing from 8:30 until the midnight curfew (raccoon-enforced), and an after-party at one of the houses on property. I am told I must not bark during the vows. We shall see.' },
     { match: /where|venue|location|address|held|place/i,
       a: 'The Starlite Ballroom in Topanga, California. Turn right at Topanga Canyon Blvd and go up until you hear wind chimes. That is real navigational advice and also my favorite sentence on this entire website.' },
     { match: /food|eat|dinner|meal|menu|vegetarian|chicken|steak|hungry|cake/i,
@@ -1934,7 +1865,7 @@
     { match: /kid|child|children|baby|famil/i,
       a: 'Children are welcome at the ceremony!! Be advised the dance floor is rated PG-13 after 9 PM due to Uncle Rick’s moves. I have witnessed the moves. My tail stopped wagging for an hour.' },
     { match: /bar|drink|alcohol|beer|wine|cocktail/i,
-      a: 'The bar is open all evening (the mic is not). Frosty drinks begin at 3:30 PM in the shade. I shall be having a bowl of water: chilled, served neat. The bartender knows me.' },
+      a: 'The bar is open all evening (the mic is not). Frosty drinks begin at cocktail hour, in the golden light. I shall be having a bowl of water: chilled, served neat. The bartender knows me.' },
     { match: /good (boy|dog)|goodest|best boy/i,
       a: 'I am. It is me. This has been independently verified by CJ, Margaret, two mail carriers, and a vet tech named Brenda. Thank you for asking the important questions. *tail wag intensifies*' },
     { match: /dog|puppy|jeeeves|jeeves|who are you|breed|doodle/i,
@@ -2012,7 +1943,7 @@
     { match: /registry|lava lamp|honeymoon fund|record crate/i, label: 'Registry', href: '#registry', note: 'lava lamp ✔ honeymoon fund ✔ record crate #37 (disputed)' },
     { match: /guestbook/i, label: 'Guestbook', href: '#guestbook', note: 'the humans actually read it' },
     { match: /getting there|wind chimes|topanga canyon blvd/i, label: 'Getting There page', href: '#travel', note: 'PCH → Topanga Canyon Blvd → wind chimes' },
-    { match: /doors at|ceremony at|schedule|3:30|4:00 pm/i, label: 'The Big Day schedule', href: '#bigday', note: 'doors 3:30 PM · vows 4:00 PM · dancing till 11:30 PM' }
+    { match: /ceremony at|schedule|curfew|after.?party|4:00 pm/i, label: 'The Big Day schedule', href: '#bigday', note: 'vows 4:00 PM · dinner 6:00 · dancing 8:30 → midnight' }
   ];
   function renderListings(text, ex) {
     var found = [];

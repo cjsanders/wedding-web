@@ -3,6 +3,12 @@
 The official GeoCities-style wedding homepage, hosted on Cloudflare Workers.
 
 - `public/` — the entire site (one glorious hand-written HTML file + photos)
+- `public/titanic-8.mid` + `public/lib/` — jukebox track 1 is a real 1997 MIDI file,
+  played in-browser by FluidSynth compiled to WASM (`js-synthesizer`, BSD-3;
+  `libfluidsynth`, LGPL — license text in `public/lib/`) with `gm.sf2`, a SoundFont
+  conversion of the classic Windows "Microsoft GS Wavetable" instrument set
+  (Roland-licensed samples; grey-area provenance, swap in e.g. TimGM6mb.sf2 if that
+  ever bothers us). All ~3.8 MB of synth+instruments lazy-load on first play only.
 - `src/worker.js` — password gate + `/api/*` endpoints (RSVP, guestbook, hit counter)
 - `schema.sql` — D1 schema (rsvps, guestbook, counters)
 
