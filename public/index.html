@@ -601,6 +601,16 @@
   .jr-avatar img.anim-tilt { animation: jr-tilt 1s ease; }
   .jr-avatar img.anim-bounce { animation: jr-bounce .8s ease; }
   #jeeves-thread > .jr-youasked:not(:first-child) { margin-top: 18px; }
+  .jr-links {
+    border: 1px solid #d9e4f2;
+    border-top: 0;
+    background: #fbfdff;
+    padding: 8px 14px 10px;
+    font: 12px/1.8 Arial, Helvetica, sans-serif;
+  }
+  .jr-links b { display: block; font-size: 10px; letter-spacing: .08em; color: #8a97a8; margin-bottom: 2px; }
+  .jr-links a { color: #0000cc; }
+  .jr-links span { color: #666; }
   .jr-reply { display: flex; margin-top: 10px; }
   .page input.jeeves-r {
     flex: 1;
@@ -1478,7 +1488,55 @@
     card.appendChild(txt);
     jvThread.appendChild(asked);
     jvThread.appendChild(card);
-    return { asked: asked, a: ans, dog: img, action: act };
+    return { asked: asked, card: card, a: ans, dog: img, action: act };
+  }
+  /* listings directory — when an answer mentions one, a link renders under the card.
+     Swap in real hotel/venue URLs here as they get booked. */
+  var JEEVES_LISTINGS = [
+    { match: /starlite motor lodge/i, label: 'Starlite Motor Lodge', href: 'https://www.google.com/maps/search/Starlite+Motor+Lodge+PCH', note: 'room block!! say "CJ & MARGARET 4EVER" for the group rate' },
+    { match: /pink flamingo inn/i, label: 'The Pink Flamingo Inn', href: 'https://www.google.com/maps/search/Pink+Flamingo+Inn+Malibu', note: 'extremely pink' },
+    { match: /topanga state park|camping/i, label: 'Topanga State Park', href: 'https://www.google.com/maps/search/Topanga+State+Park', note: 'camping — the canyon is cold and Jeeeves will not warm you' },
+    { match: /starlite ballroom/i, label: 'The Starlite Ballroom', href: '#travel', note: 'the venue!! directions on the Getting There page' },
+    { match: /in.?n.?out/i, label: 'In-N-Out Burger', href: 'https://www.in-n-out.com', note: 'the truck is real. midnight. not a drill' },
+    { match: /\bLAX\b/, label: 'LAX', href: 'https://www.flylax.com', note: '~40 minutes from the venue' },
+    { match: /burbank/i, label: 'Hollywood Burbank Airport', href: 'https://hollywoodburbankairport.com', note: 'the calm one' },
+    { match: /rsvp/i, label: 'RSVP page', href: '#rsvp', note: 'due 02/27/27 — avoid the phone call' },
+    { match: /registry|lava lamp|honeymoon fund|record crate/i, label: 'Registry', href: '#registry', note: 'lava lamp ✔ honeymoon fund ✔ record crate #37 (disputed)' },
+    { match: /guestbook/i, label: 'Guestbook', href: '#guestbook', note: 'the humans actually read it' },
+    { match: /getting there|wind chimes|topanga canyon blvd/i, label: 'Getting There page', href: '#travel', note: 'PCH → Topanga Canyon Blvd → wind chimes' },
+    { match: /doors at|ceremony at|schedule|3:30|4:00 pm/i, label: 'The Big Day schedule', href: '#bigday', note: 'doors 3:30 PM · vows 4:00 PM · dancing till 11:30 PM' }
+  ];
+  function renderListings(text, ex) {
+    var found = [];
+    for (var i = 0; i < JEEVES_LISTINGS.length; i++) {
+      var pos = text.search(JEEVES_LISTINGS[i].match);
+      if (pos !== -1) found.push({ pos: pos, l: JEEVES_LISTINGS[i] });
+    }
+    if (!found.length) return;
+    found.sort(function (a, b) { return a.pos - b.pos; });
+    found = found.slice(0, 4);
+    var box = document.createElement('div');
+    box.className = 'jr-links';
+    var h = document.createElement('b');
+    h.textContent = 'JEEEVES ALSO FETCHED:';
+    box.appendChild(h);
+    found.forEach(function (f) {
+      var row = document.createElement('div');
+      row.appendChild(document.createTextNode('🦴 '));
+      var a = document.createElement('a');
+      a.textContent = f.l.label;
+      a.href = f.l.href;
+      if (f.l.href.charAt(0) !== '#') {
+        a.target = '_blank';
+        a.rel = 'noopener';
+      }
+      row.appendChild(a);
+      var note = document.createElement('span');
+      note.textContent = ' — ' + f.l.note;
+      row.appendChild(note);
+      box.appendChild(row);
+    });
+    ex.card.parentNode.insertBefore(box, ex.card.nextSibling);
   }
   function jeevesAnswer(q) {
     for (var i = 0; i < JEEVES_QA.length; i++) {
@@ -1515,7 +1573,11 @@
     ex.a.appendChild(cursor);
     var si = 0, pos = 0;
     (function chunk() {
-      if (si >= segs.length) { cursor.remove(); return; }
+      if (si >= segs.length) {
+        cursor.remove();
+        renderListings(text, ex);
+        return;
+      }
       var seg = segs[si];
       if (seg.act !== undefined) {
         performAction(seg.act, ex);
