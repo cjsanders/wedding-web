@@ -217,6 +217,7 @@
   }
   table.datagrid th { background: #17114a; color: #7CFC00; font-family: 'Courier New', monospace; letter-spacing: .08em; }
   table.datagrid td.k { background: #FF3EB5; color: #fff; white-space: nowrap; }
+  .bigico { font-size: 1.8rem; line-height: 1; vertical-align: -4px; margin-right: 4px; display: inline-block; }
 
   /* ============ COUNTDOWN + COUNTER ============ */
   .odometer {
@@ -729,12 +730,12 @@
 
       <table class="datagrid">
         <tr><th>DATE</th><th>WHAT HAPPENED!!</th></tr>
-        <tr><td class="k">🌵 2018</td><td>CJ and Margaret meet in Joshua Tree and become friends.</td></tr>
-        <tr><td class="k">🤝 2023</td><td>Friendship rekindled!!</td></tr>
-        <tr><td class="k">🔒 2024</td><td>CJ joins Margaret on her Euro trip and locks it in.</td></tr>
-        <tr><td class="k">🐶 2025</td><td>We adopted Jeeves!!</td></tr>
-        <tr><td class="k">💍 2026</td><td>CJ popped the Q.</td></tr>
-        <tr><td class="k">💒 2027</td><td>We're getting hitched!!</td></tr>
+        <tr><td class="k"><span class="bigico">🌵</span> 2018</td><td>CJ and Margaret meet in Joshua Tree and become friends.</td></tr>
+        <tr><td class="k"><span class="bigico">🤝</span> 2023</td><td>Friendship rekindled!!</td></tr>
+        <tr><td class="k"><span class="bigico">🔒</span> 2024</td><td>CJ joins Margaret on her Euro trip and locks it in.</td></tr>
+        <tr><td class="k"><span class="bigico">🐶</span> 2025</td><td>We adopted Jeeves!!</td></tr>
+        <tr><td class="k"><span class="bigico">💍</span> 2026</td><td>CJ popped the Q.</td></tr>
+        <tr><td class="k"><span class="bigico">💒</span> 2027</td><td>We're getting hitched!!</td></tr>
       </table>
 
       <h3>A/S/L?</h3>
@@ -1288,13 +1289,6 @@
   });
 
   /* ---------- guestbook ---------- */
-  var SEED_ENTRIES = [
-    { name: 'Linda (Mother of the Bride)', from: 'Tucson, AZ', hp: "Linda's Angel Blessings Page", msg: 'I helped make this website. The sparkles were my idea. Love, Mom', date: '01/15/27' },
-    { name: 'xX_b3stm4n_Dave_Xx', from: 'the garage', hp: '', msg: 'first', date: '01/15/27' },
-    { name: 'Aunt Carol', from: 'Sacramento, CA', hp: '', msg: 'How do I make the music stop. Beautiful site. How do I make the music stop.', date: '01/16/27' },
-    { name: 'Webmaster_Greg_1999', from: 'the Information Superhighway', hp: "Greg's HTML Zone", msg: 'Nice use of tables. The marquee is a bold choice. Respect.', date: '01/22/27' },
-    { name: 'CJ & Margaret', from: 'Topanga, CA', hp: 'you are here!!', msg: 'Thanks for stopping by!! Bookmark us (Ctrl+D)!! See you in March!!', date: '02/01/27' }
-  ];
   function gbDate(at) {
     var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(at || '');
     return m ? m[2] + '/' + m[3] + '/' + m[1].slice(2) : '';
@@ -1302,9 +1296,15 @@
   function renderGuestbook(list) {
     var wrap = document.getElementById('gb-entries');
     wrap.textContent = '';
-    var all = SEED_ENTRIES.concat(list);
-    for (var i = all.length - 1; i >= 0; i--) {
-      var en = all[i];
+    if (!list.length) {
+      var empty = document.createElement('p');
+      empty.className = 'center small';
+      empty.textContent = '(nobody has signed yet!! this is your chance to be FIRST. immortality awaits.)';
+      wrap.appendChild(empty);
+      return;
+    }
+    for (var i = list.length - 1; i >= 0; i--) {
+      var en = list[i];
       var div = document.createElement('div');
       div.className = 'gbentry';
       var meta = document.createElement('div');
