@@ -495,6 +495,8 @@
     flex-direction: column;
   }
   .lightbox img { max-width: 100%; min-height: 0; flex: 1; object-fit: contain; border: 1px solid #999; }
+  .lightbox img.wipe { animation: lb-wipe .55s steps(14, end); }
+  @keyframes lb-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
   .lightbox figcaption { font: bold 13px/1.5 'Comic Sans MS', cursive; color: #17114a; text-align: center; padding: 8px 4px 4px; }
   .lightbox .lb-bar { text-align: center; padding-bottom: 2px; }
   .lightbox .lb-nav {
@@ -945,6 +947,8 @@
       <h2 id="h-photos">Photo Gallery!!</h2>
       <p class="center small pink">The album FINALLY finished downloading (started in March — 10 photos, 2.1 MB, we are so sorry about the phone line). Right-click → Save As is encouraged!!</p>
 
+      <p class="center"><button class="btn" id="ss-btn" type="button">🎬 START THE SLIDESHOW!! (100% MIDI soundtrack included)</button></p>
+
       <div class="photogrid">
         <figure class="polaroid photo">
           <div class="pic"><img src="photos/gallery01.jpg" alt="Heart-framed photo of CJ and Margaret collaged over a glowing painting of Jesus with light rays and a tiny Earth" loading="lazy"></div>
@@ -1192,7 +1196,7 @@
 <div class="lightbox" id="lightbox" hidden>
   <button class="btn lb-nav" id="lb-prev" type="button" aria-label="Previous photo">◀</button>
   <figure>
-    <div class="lb-bar"><b id="lb-count" class="small"></b> <button class="btn" id="lb-close" type="button">✖ CLOSE</button></div>
+    <div class="lb-bar"><b id="lb-count" class="small"></b> <button class="btn" id="ss-toggle" type="button">▶ SLIDESHOW</button> <button class="btn" id="lb-close" type="button">✖ CLOSE</button></div>
     <img id="lb-img" src="" alt="">
     <figcaption id="lb-cap"></figcaption>
   </figure>
@@ -1987,21 +1991,45 @@
       .catch(function () {}); /* the models are shy today */
   })();
 
-  /* ---------- photo lightbox ---------- */
+  /* ---------- photo lightbox + slideshow (soundtrack courtesy of the jukebox) ---------- */
   (function () {
     var lb = document.getElementById('lightbox');
     if (!lb) return;
     var lbImg = document.getElementById('lb-img'), lbCap = document.getElementById('lb-cap'),
-        lbCount = document.getElementById('lb-count');
+        lbCount = document.getElementById('lb-count'), ssToggle = document.getElementById('ss-toggle');
     var figs = Array.prototype.slice.call(document.querySelectorAll('.polaroid.photo'));
-    var cur = 0;
+    var pi = 0, ssTimer = null, ssOn = false, ssStartedMusic = false;
+    var SS_MS = 4000;
+    function updateCount() {
+      lbCount.textContent = (ssOn ? '★ SLIDESHOW ★ ' : '') + 'PIC ' + (pi + 1) + '/' + figs.length + ' ·';
+    }
     function show(i) {
-      cur = (i + figs.length) % figs.length;
-      var img = figs[cur].querySelector('img'), cap = figs[cur].querySelector('figcaption');
+      pi = (i + figs.length) % figs.length;
+      var img = figs[pi].querySelector('img'), cap = figs[pi].querySelector('figcaption');
+      lbImg.classList.remove('wipe');
+      void lbImg.offsetWidth; /* restart the wipe animation */
       lbImg.src = img.src;
       lbImg.alt = img.alt;
+      if (ssOn) lbImg.classList.add('wipe'); /* projector wipe is a slideshow-only move */
       lbCap.textContent = cap ? cap.textContent : '';
-      lbCount.textContent = 'PIC ' + (cur + 1) + '/' + figs.length + ' ·';
+      updateCount();
+    }
+    function ssArm() {
+      clearInterval(ssTimer);
+      ssTimer = setInterval(function () { show(pi + 1); }, SS_MS);
+    }
+    function ssStart() {
+      ssOn = true;
+      ssToggle.textContent = '❚❚ PAUSE';
+      ssArm();
+      if (!playing) { playTrack(1); ssStartedMusic = true; } /* canon_in_d_8bit.mid, obviously */
+      updateCount();
+    }
+    function ssStop() {
+      ssOn = false;
+      ssToggle.textContent = '▶ SLIDESHOW';
+      clearInterval(ssTimer);
+      updateCount();
     }
     function open(i) {
       show(i);
@@ -2009,7 +2037,16 @@
       document.body.style.overflow = 'hidden';
       document.getElementById('lb-close').focus();
     }
-    function close() { lb.hidden = true; document.body.style.overflow = ''; }
+    function close() {
+      ssStop();
+      if (ssStartedMusic) { stopMusic(); jbHighlight(); ssStartedMusic = false; }
+      lb.hidden = true;
+      document.body.style.overflow = '';
+    }
+    function bump(d) {
+      show(pi + d);
+      if (ssOn) ssArm(); /* manual nav resets the auto-advance clock */
+    }
     figs.forEach(function (fig, i) {
       fig.setAttribute('tabindex', '0');
       fig.setAttribute('role', 'button');
@@ -2019,15 +2056,18 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(i); }
       });
     });
-    document.getElementById('lb-prev').addEventListener('click', function () { show(cur - 1); });
-    document.getElementById('lb-next').addEventListener('click', function () { show(cur + 1); });
+    var ssBtn = document.getElementById('ss-btn');
+    if (ssBtn) ssBtn.addEventListener('click', function () { open(0); ssStart(); });
+    ssToggle.addEventListener('click', function () { ssOn ? ssStop() : ssStart(); });
+    document.getElementById('lb-prev').addEventListener('click', function () { bump(-1); });
+    document.getElementById('lb-next').addEventListener('click', function () { bump(1); });
     var swiped = false, sx = null;
     lb.addEventListener('pointerdown', function (e) { sx = e.clientX; });
     lb.addEventListener('pointerup', function (e) {
       if (sx === null) return;
       var dx = e.clientX - sx;
       sx = null;
-      if (Math.abs(dx) > 60) { show(cur + (dx < 0 ? 1 : -1)); swiped = true; }
+      if (Math.abs(dx) > 60) { bump(dx < 0 ? 1 : -1); swiped = true; }
     });
     lb.addEventListener('click', function (e) {
       if (swiped) { swiped = false; return; }
@@ -2036,8 +2076,8 @@
     document.addEventListener('keydown', function (e) {
       if (lb.hidden) return;
       if (e.key === 'Escape') close();
-      if (e.key === 'ArrowLeft') show(cur - 1);
-      if (e.key === 'ArrowRight') show(cur + 1);
+      if (e.key === 'ArrowLeft') bump(-1);
+      if (e.key === 'ArrowRight') bump(1);
     });
   })();
 
