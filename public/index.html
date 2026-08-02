@@ -224,6 +224,58 @@
   table.datagrid td.k { background: #FF3EB5; color: #fff; white-space: nowrap; }
   .bigico { font-size: 1.8rem; line-height: 1; vertical-align: -4px; margin-right: 4px; display: inline-block; }
 
+  /* the big day timeline */
+  .sked { list-style: none; margin: 14px 0; padding: 0; position: relative; }
+  .sked::before {
+    content: '';
+    position: absolute;
+    left: 26px;
+    top: 10px;
+    bottom: 10px;
+    border-left: 4px dotted #574fb5;
+  }
+  .sked li { position: relative; display: flex; align-items: flex-start; gap: 12px; margin: 16px 0; }
+  .sked-ico {
+    position: relative;
+    z-index: 1;
+    flex: none;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    background: #fff;
+    border: 3px outset #b6aef0;
+    border-radius: 50%;
+    box-shadow: 3px 3px 0 rgba(23, 17, 74, .3);
+  }
+  .sked-body {
+    flex: 1;
+    background: #fff;
+    border: 2px ridge #b6aef0;
+    padding: 8px 12px 10px;
+    box-shadow: 4px 4px 0 rgba(23, 17, 74, .25);
+  }
+  .sked li:nth-child(odd) .sked-body { transform: rotate(-.5deg); }
+  .sked li:nth-child(even) .sked-body { transform: rotate(.5deg); }
+  .sked li.hero .sked-body { background: #fffbe0; border-color: #FFD500; }
+  .sked-time {
+    display: inline-block;
+    font: bold 13px 'Courier New', monospace;
+    letter-spacing: .06em;
+    color: #fff;
+    background: #FF3EB5;
+    border: 2px outset #ff8ad8;
+    padding: 3px 9px;
+    margin-bottom: 5px;
+    transform: rotate(-2deg);
+  }
+  .sked li:nth-child(2) .sked-time { background: #574fb5; border-color: #b6aef0; transform: rotate(1.5deg); }
+  .sked li:nth-child(3) .sked-time { background: #e08700; border-color: #ffd27a; }
+  .sked li:nth-child(4) .sked-time { background: #1e9e00; border-color: #8ee07a; transform: rotate(2deg); }
+  .sked li:nth-child(5) .sked-time { background: #d4008f; border-color: #ff7ad0; }
+  .sked li:nth-child(6) .sked-time { background: #007a7a; border-color: #7adcdc; transform: rotate(-1.5deg); }
+
   /* ============ COUNTDOWN + COUNTER ============ */
   .odometer {
     display: inline-block;
@@ -870,17 +922,50 @@
       <p class="times center"><b>Saturday, March 27, 2027</b> · The Starlite Ballroom · Topanga, CA</p>
 
       <h3>Schedule of events</h3>
-      <table class="datagrid">
-        <tr><th>TIME</th><th>EVENT</th></tr>
-        <tr><td class="k">3:30 PM</td><td>Doors open!! Frosty drinks in the shade. Find your seat, find your friends.</td></tr>
-        <tr><td class="k">4:00 PM</td><td>Ceremony. Short and sweet — the dance floor is calling and we respect that.</td></tr>
-        <tr><td class="k">4:30 PM</td><td>Photos + cocktails. The mountains do a thing at sunset. You'll see.</td></tr>
-        <tr><td class="k">6:00 PM</td><td>Dinner!! (You picked your meal when you RSVP'd. You did RSVP, right??)</td></tr>
-        <tr><td class="k">7:30 PM</td><td>Toasts. Dave has been given a 4-minute limit and a stopwatch.</td></tr>
-        <tr><td class="k">8:00 PM</td><td>DANCING. The DJ has been told "yes" to every request ending in "…by ABBA."</td></tr>
-        <tr><td class="k">11:30 PM</td><td>Last song. It's a slow one. Grab somebody.</td></tr>
-        <tr><td class="k">MIDNIGHT</td><td>🍔 In-N-Out truck. This is not a drill.</td></tr>
-      </table>
+      <ol class="sked">
+        <li class="hero">
+          <span class="sked-ico" aria-hidden="true">💒</span>
+          <div class="sked-body">
+            <span class="sked-time">4:00 PM</span><br>
+            <span class="blink">★</span> <b>THE CEREMONY!!</b> Short and sweet — the dance floor is calling and we respect that.
+          </div>
+        </li>
+        <li>
+          <span class="sked-ico" aria-hidden="true">🍸</span>
+          <div class="sked-body">
+            <span class="sked-time">AFTER "I DO"</span><br>
+            <b>Cocktail hour,</b> directly afterwards. The canyon does a golden-light thing. You'll see.
+          </div>
+        </li>
+        <li>
+          <span class="sked-ico" aria-hidden="true">🍽</span>
+          <div class="sked-body">
+            <span class="sked-time">6:00 PM</span><br>
+            <b>Dinner!!</b> (You picked your meal when you RSVP'd. You did RSVP, right??)
+          </div>
+        </li>
+        <li>
+          <span class="sked-ico" aria-hidden="true">🪩</span>
+          <div class="sked-body">
+            <span class="sked-time">8:30 PM</span><br>
+            <b>MUSIC!!</b> The DJ has been told "yes" to every request ending in "…by ABBA."
+          </div>
+        </li>
+        <li>
+          <span class="sked-ico" aria-hidden="true">🌙</span>
+          <div class="sked-body">
+            <span class="sked-time">12:00 AM</span><br>
+            <b>Curfew.</b> The canyon has noise rules and the raccoons enforce them.
+          </div>
+        </li>
+        <li>
+          <span class="sked-ico" aria-hidden="true">🏠</span>
+          <div class="sked-body">
+            <span class="sked-time">AFTER-HOURS</span><br>
+            <b>After-party</b> at one of the private houses on property. Follow whoever looks like they know where they're going.
+          </div>
+        </li>
+      </ol>
 
       <h3>Dress code</h3>
       <div class="whitebox">
