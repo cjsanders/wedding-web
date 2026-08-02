@@ -753,7 +753,7 @@
 
 <aside class="jukebox" id="jukebox" aria-label="Wedding MIDI jukebox">
   <div class="jb-titlebar">
-    <span>💿 WEDDING JUKEBOX v2.0</span>
+    <span>💿 WEDDING JUKEBOX v2.1</span>
     <button type="button" id="jb-min" aria-label="Minimize jukebox" title="Minimize">_</button>
   </div>
   <div class="jb-body" id="jb-body">
@@ -822,13 +822,14 @@
         <div class="countcell"><span class="odometer" id="cd-s">00</span><div class="small">SEC</div></div>
       </div>
 
-      <p class="center small pink">🎵 Crank up the <b>WEDDING JUKEBOX</b> (floating over there ➡) — five certified wedding bangers, lovingly converted to MIDI!!</p>
+      <p class="center small pink">🎵 Crank up the <b>WEDDING JUKEBOX</b> (floating over there ➡) — six certified wedding bangers, lovingly converted to MIDI!!</p>
 
       <div class="construction">🚧 <span class="blink">UNDER CONSTRUCTION</span> 🚧<br>
       <span class="small">The honeymoon page is not done yet. Please pardon our dust!!</span></div>
 
       <h3>What's new!!</h3>
       <div class="whitebox small">
+        <b>02/22/27</b> — JUKEBOX v2.1!! titanic-8.mid is now track #1. Near, far, WHEREVER you are on this website, the music follows.<br>
         <b>02/20/27</b> — ASK JEEEVES is LIVE!! Our dog answers your wedding questions now. He is very wise. He ate a bee once.<br>
         <b>02/14/27</b> — WEDDING JUKEBOX v2.0!! Now with FIVE songs. Aunt Carol has been warned.<br>
         <b>02/01/27</b> — Added the In-N-Out truck to the schedule. You're welcome.<br>
@@ -1449,16 +1450,26 @@
     });
   }
 
-  /* ---------- WEDDING JUKEBOX v2.0 (all public-domain bangers) ---------- */
+  /* ---------- WEDDING JUKEBOX v2.1 (public-domain bangers + one iceberg ballad) ---------- */
   var jb = document.getElementById('jukebox');
   var jbNp = document.getElementById('jb-np');
   var jbList = document.getElementById('jb-list');
   var audioCtx = null, jbTimer = null, playing = false, cur = 0;
   var N = { D3: 146.83, E3: 164.81, Fs3: 185.00, G3: 196.00, A3: 220.00, B3: 246.94,
             C4: 261.63, Cs4: 277.18, D4: 293.66, Ds4: 311.13, E4: 329.63, F4: 349.23, Fs4: 369.99,
-            G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33, Ds5: 622.25, E5: 659.25, G5: 783.99 };
+            G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33, Ds5: 622.25, E5: 659.25, G5: 783.99,
+            Fs5: 739.99, Gs5: 830.61, A5: 880.00, B5: 987.77, Cs6: 1108.73 };
   /* notes: [freq, beats] — approximately, with love */
   var TRACKS = [
+    /* transcribed from the pan-flute channel of the real titanic-8.mid (seq. by HONEY orlandi, 1997) */
+    { file: 'titanic-8.mid', kb: 33, beat: .55, notes: [
+      [N.E5, .5], [N.Fs5, .5], [N.Fs5, .5], [N.Gs5, 2.5],
+      [N.Fs5, .5], [N.E5, .5], [N.Fs5, .5], [N.B5, 2.5],
+      [N.Gs5, .5], [N.Fs5, .5], [N.E5, 6], [0, 1],
+      [N.E5, .5], [N.Fs5, .5], [N.Fs5, .5], [N.Gs5, 2],
+      [N.A5, .33], [N.Gs5, .33], [N.Fs5, .34], [N.E5, .5], [N.Fs5, .5], [N.B5, 2.5],
+      [N.Gs5, .5], [N.B5, .5], [N.Cs6, 2], [N.B5, 2], [N.Fs5, 3], [0, 1],
+      [N.E5, .5], [N.Fs5, .5], [N.Gs5, 2], [N.Fs5, 2], [N.E5, 4], [0, 1]] },
     { file: 'bridal_chorus_8bit.mid', kb: 14, beat: .42, notes: [
       [N.C4, 1], [N.F4, .75], [N.F4, .25], [N.F4, 2],
       [N.C4, 1], [N.G4, .75], [N.E4, .25], [N.F4, 2],
@@ -1694,7 +1705,7 @@
     { match: /food|eat|dinner|meal|menu|vegetarian|chicken|steak|hungry|cake/i,
       a: 'Dinner is chicken, steak, or vegetarian — you chose when you RSVP’d (you DID RSVP??). There is also cake, which I am “not allowed” to have. And at midnight: the In-N-Out truck. Ask me about the In-N-Out truck.' },
     { match: /song|music|dance|dj|band|midi|jukebox|abba/i,
-      a: 'The DJ has been instructed to say yes to every request ending in “…by ABBA.” Until then, please enjoy the WEDDING JUKEBOX on this website — five certified MIDI bangers. Track 2 makes me tilt my head. Both directions.' },
+      a: 'The DJ has been instructed to say yes to every request ending in “…by ABBA.” Until then, please enjoy the WEDDING JUKEBOX on this website — six certified MIDI bangers, now featuring the Titanic song at #1. Track 3 makes me tilt my head. Both directions.' },
     { match: /gift|registry|present|money/i,
       a: 'Your presence is the present!! But the Registry page has the wishlist: a large lava lamp, the honeymoon fund, and “record crate #37” (Margaret says no. CJ says please. I say nothing. I have a tennis ball and plausible deniability.)' },
     { match: /weather|hot|cold|temperature|rain|sun/i,
@@ -2022,7 +2033,7 @@
       ssOn = true;
       ssToggle.textContent = '❚❚ PAUSE';
       ssArm();
-      if (!playing) { playTrack(1); ssStartedMusic = true; } /* canon_in_d_8bit.mid, obviously */
+      if (!playing) { playTrack(2); ssStartedMusic = true; } /* canon_in_d_8bit.mid, obviously */
       updateCount();
     }
     function ssStop() {
