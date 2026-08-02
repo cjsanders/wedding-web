@@ -477,6 +477,20 @@
     letter-spacing: .1em;
   }
 
+  /* ============ ADMIN ============ */
+  .admin-badge {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    z-index: 9999;
+    background: #17114a;
+    color: #ffe95e;
+    font: bold 10px/1 Verdana, Geneva, sans-serif;
+    letter-spacing: .06em;
+    padding: 7px 10px;
+    border: 3px outset #574fb5;
+  }
+
   /* honeypot field — humans never see it, bots can't resist it */
   .hpot { position: absolute; left: -9999px; top: -9999px; }
 
@@ -811,17 +825,18 @@
     <!-- ============ GETTING THERE ============ -->
     <section class="page" id="pg-travel" aria-labelledby="h-travel">
       <h2 id="h-travel">Getting There</h2>
-      <p class="times center">We printed you MapQuest directions. You're welcome.</p>
+      <p class="times center">⚠ Cell service is limited on the drive, so please plug in the address BEFORE!! ⚠</p>
 
-      <h3>Directions (MapQuest™, allegedly)</h3>
+      <h3>📍 The address (write it on your hand)</h3>
+      <div class="whitebox center">
+        <b style="font-size:1.2rem;">21914 Gold Stone Road<br>Topanga, CA 90290</b><br><br>
+        <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&amp;query=21914+Gold+Stone+Road,+Topanga,+CA+90290">🗺 Open in Google Maps</a>
+        <a class="btn" target="_blank" rel="noopener" href="https://maps.apple.com/?address=21914+Gold+Stone+Road,+Topanga,+CA+90290">🍎 Open in Apple Maps</a>
+      </div>
+
+      <h3>🚗 Parking (there basically isn't any)</h3>
       <div class="whitebox">
-        <ol style="margin:4px 0 4px 18px; padding:0;">
-          <li>Fly into <b>LAX</b> — 40 min away — or <b>Burbank (BUR)</b> if you enjoy a calmer airport and a longer story.</li>
-          <li>Take PCH north until the ocean is on your left and your deadlines are behind you.</li>
-          <li>Turn right at <b>Topanga Canyon Blvd</b>. Yes, up. Keep going up.</li>
-          <li>Wind past the crystal shop, the vintage market, and at least two people playing flute. This is correct.</li>
-          <li>You have arrived!! Estimated time: 40 min from LAX. Estimated vibes: immaculate.</li>
-        </ol>
+        We <b>strongly encourage Uber or rideshare</b> — we are only allotted <b>20 parking spots</b> and most will be used by vendors. Our chosen hotels will have <b>transportation shuttles included!!</b> 🚌
       </div>
 
       <h3>🗺 The venue map!! (yes it's a real treasure map)</h3>
@@ -1113,6 +1128,18 @@
       hitEl.textContent = String(d.hits).padStart(7, '0');
     }
   }).catch(function () { /* offline: last known number stays up */ });
+
+  /* ---------- admin mode (logged in with the admin password) ---------- */
+  var isAdmin = false;
+  fetch('/api/me').then(function (r) { return r.json(); }).then(function (d) {
+    if (!d || d.role !== 'admin') return;
+    isAdmin = true;
+    document.body.classList.add('is-admin');
+    var badge = document.createElement('div');
+    badge.className = 'admin-badge';
+    badge.textContent = '🔧 ADMIN MODE — hello, management!!';
+    document.body.appendChild(badge);
+  }).catch(function () {});
 
   /* ---------- countdown ---------- */
   var TARGET = new Date('2027-03-27T16:00:00-07:00').getTime();

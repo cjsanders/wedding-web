@@ -7,6 +7,7 @@
  *
  * Secrets (wrangler secret put … / .dev.vars for local):
  *   SITE_PASSWORD     — the shared guest password (compared case-insensitively)
+ *   ADMIN_PASSWORD    — entered at the same gate, grants role=admin instead
  *   AUTH_SECRET       — random string used to sign the auth cookie
  *   ANTHROPIC_API_KEY — for Ask Jeeeves; if unset, /api/jeeves returns 503 and
  *                       the frontend falls back to the pre-recorded answers
@@ -24,14 +25,14 @@ export default {
       return handleLogin(request, env, url);
     }
 
-    const authed = await isAuthed(request, env);
+    const role = await getRole(request, env);
 
     if (path.startsWith('/api/')) {
-      if (!authed) return json({ error: 'who goes there!!' }, 401);
-      return handleApi(request, env, path);
+      if (!role) return json({ error: 'who goes there!!' }, 401);
+      return handleApi(request, env, path, role);
     }
 
-    if (!authed) {
+    if (!role) {
       return new Response(gatePage(url.searchParams.has('wrong')), {
         status: 401,
         headers: { 'Content-Type': 'text/html;charset=UTF-8', 'Cache-Control': 'no-store' },
@@ -43,35 +44,43 @@ export default {
 
 /* ---------- auth ---------- */
 
-async function guestToken(env) {
+async function roleToken(env, role) {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     'raw', enc.encode(env.AUTH_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
   );
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode('cjm-wedding-guest'));
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode('cjm-wedding-' + role));
   return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function isAuthed(request, env) {
-  if (!env.AUTH_SECRET) return false;
+// null (not logged in), 'guest', or 'admin'
+async function getRole(request, env) {
+  if (!env.AUTH_SECRET) return null;
   const m = (request.headers.get('Cookie') || '').match(
     new RegExp('(?:^|;\\s*)' + COOKIE + '=([0-9a-f]{64})')
   );
-  return m !== null && m[1] === (await guestToken(env));
+  if (!m) return null;
+  if (m[1] === (await roleToken(env, 'admin'))) return 'admin';
+  if (m[1] === (await roleToken(env, 'guest'))) return 'guest';
+  return null;
 }
 
 async function handleLogin(request, env, url) {
   const form = await request.formData().catch(() => null);
   const guess = String(form?.get('password') || '').trim().toLowerCase();
-  const real = String(env.SITE_PASSWORD || '').trim().toLowerCase();
-  if (!real || guess !== real) {
+  const guestPw = String(env.SITE_PASSWORD || '').trim().toLowerCase();
+  const adminPw = String(env.ADMIN_PASSWORD || '').trim().toLowerCase();
+  const role = adminPw && guess === adminPw ? 'admin'
+    : guestPw && guess === guestPw ? 'guest'
+    : null;
+  if (!role) {
     return Response.redirect(new URL('/?wrong', url).toString(), 303);
   }
   return new Response(null, {
     status: 303,
     headers: {
       Location: new URL('/', url).toString(),
-      'Set-Cookie': `${COOKIE}=${await guestToken(env)}; Path=/; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
+      'Set-Cookie': `${COOKIE}=${await roleToken(env, role)}; Path=/; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
     },
   });
 }
@@ -109,8 +118,12 @@ RULES:
 
 /* ---------- api ---------- */
 
-async function handleApi(request, env, path) {
+async function handleApi(request, env, path, role) {
   try {
+    if (path === '/api/me' && request.method === 'GET') {
+      return json({ role });
+    }
+
     if (path === '/api/visit' && request.method === 'POST') {
       const row = await env.DB
         .prepare("UPDATE counters SET value = value + 1 WHERE name = 'hits' RETURNING value")
