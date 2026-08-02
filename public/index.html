@@ -144,6 +144,7 @@
   .navbtn:hover { background: #FFD500; }
   .navbtn:active { border-style: inset; }
   .navbtn.here { border-style: inset; background: #FF3EB5; color: #fff !important; }
+  .navbtn.adminbtn { background: linear-gradient(180deg, #fff7c4, #ffd94d); border-color: #fff2a8; }
 
   .rainbow {
     height: 7px;
@@ -464,6 +465,10 @@
     border: 1px solid #999;
   }
   .polaroid figcaption { font: bold 12px/1.5 'Comic Sans MS', cursive; text-align: center; padding-top: 6px; }
+  .polaroid.photo { margin: 0; }
+  .polaroid.photo .pic { height: 220px; }
+  .polaroid.photo .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photogrid .polaroid:nth-child(even) { transform: rotate(2deg); }
 
   /* ============ REGISTRY ============ */
   .wishrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
@@ -900,28 +905,54 @@
     <!-- ============ PHOTOS ============ -->
     <section class="page" id="pg-photos" aria-labelledby="h-photos">
       <h2 id="h-photos">Photo Gallery!!</h2>
-      <p class="center small pink">Photos are loading via 56k modem. Estimated completion: <b>March 27, 2027.</b> Please do not pick up the phone.</p>
+      <p class="center small pink">The album FINALLY finished downloading (started in March — 10 photos, 2.1 MB, we are so sorry about the phone line). Right-click → Save As is encouraged!!</p>
 
       <div class="photogrid">
-        <div class="brokenimg">
-          <div class="frame"><span class="icon">🖼</span> us_at_the_dinosaurs.jpg</div>
-          <div class="loadbar"><i style="animation-duration:260s;"></i></div>
-          <b>2%</b> of 340 KB · est. 4 hrs remaining
-        </div>
-        <div class="brokenimg">
-          <div class="frame"><span class="icon">🖼</span> proposal_milkshake_CLOSEUP.jpg</div>
-          <div class="loadbar"><i style="animation-duration:200s;"></i></div>
-          <b>9%</b> of 512 KB · connection interrupted (Mom called)
-        </div>
-        <div class="brokenimg">
-          <div class="frame"><span class="icon">🖼</span> fleetwood_in_a_bowtie.jpg</div>
-          <div class="loadbar"><i style="animation-duration:150s;"></i></div>
-          <b>14%</b> of 1.2 MB · why is the cat photo the biggest file
-        </div>
-        <figure class="polaroid" style="margin:0;">
-          <div class="pic" aria-hidden="true">🌴💑🌵</div>
-          <figcaption>the only one that finished downloading!! (Topanga, 2025)</figcaption>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery01.jpg" alt="Heart-framed photo of CJ and Margaret collaged over a glowing painting of Jesus with light rays and a tiny Earth" loading="lazy"></div>
+          <figcaption>blessed.jpg · found on the family computer like this. no further questions.</figcaption>
         </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery10.jpg" alt="A baby sitting on a sunny beach playing with a red bucket" loading="lazy"></div>
+          <figcaption>one of us, age 1. already committed to the beach lifestyle.</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery07.jpg" alt="A little kid in a purple wizard costume with a pointed hat, smiling on a garden path" loading="lazy"></div>
+          <figcaption>one of us, age 4. the dress code was decided that very day.</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery03.jpg" alt="CJ and Margaret on the beach holding Jeeves the scruffy dog, waves rolling in behind them" loading="lazy"></div>
+          <figcaption>Jeeves' first beach day!! he has filed a formal complaint about the waves.</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery02.jpg" alt="Polaroid of CJ and Margaret standing between bright orange torii gates" loading="lazy"></div>
+          <figcaption>10,000 gates in Kyoto and we took one (1) photo. it was this banger.</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery04.jpg" alt="Japanese purikura photo-booth picture of CJ and Margaret with an anime-style filter and pink Japanese text" loading="lazy"></div>
+          <figcaption>the Tokyo photo booth turned us into anime. we allowed it.</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery09.jpg" alt="CJ and Margaret selfie at a crowded festival bar with warm lights and blue eyeshadow" loading="lazy"></div>
+          <figcaption>the desert!! the eyeshadow!! the era!!</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery05.jpg" alt="Film party photo of CJ in a suit, sunglasses and a neck brace beside Margaret in a tiger-print dress shushing the camera" loading="lazy"></div>
+          <figcaption>he's FINE. legally we cannot elaborate.</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery06.jpg" alt="Blurry golden-hour photo of CJ and Margaret about to kiss, red cups in hand" loading="lazy"></div>
+          <figcaption>blurry because the moment was too powerful for 0.3 megapixels.</figcaption>
+        </figure>
+        <figure class="polaroid photo">
+          <div class="pic"><img src="photos/gallery08.jpg" alt="CJ and Margaret wearing purple orchid leis in front of a palm hut by the ocean" loading="lazy"></div>
+          <figcaption>honeymoon research. the research is going extremely well.</figcaption>
+        </figure>
+        <div class="brokenimg">
+          <div class="frame"><span class="icon">🖼</span> jeeves_ate_the_disposable.jpg</div>
+          <div class="loadbar"><i style="animation-duration:200s;"></i></div>
+          <b>3%</b> of 1.2 MB · evidence pending
+        </div>
       </div>
 
       <p class="center small">Full Webshots album coming after the honeymoon!! Bookmark us (Ctrl+D)!!</p>
@@ -1188,7 +1219,16 @@
     badge.href = '#admin';
     badge.textContent = '🔧 ADMIN MODE — open control panel';
     document.body.appendChild(badge);
-    if ((location.hash || '') === '#admin') route(); // page exists now; route to it
+    var abtn = document.createElement('a');
+    abtn.className = 'navbtn adminbtn';
+    abtn.href = '#admin';
+    var em = document.createElement('span');
+    em.className = 'navemoji';
+    em.textContent = '🔧';
+    abtn.appendChild(em);
+    abtn.appendChild(document.createTextNode(' Admin'));
+    document.querySelector('.nav').appendChild(abtn);
+    route(); // page + button exist now; refresh routing/active states
   }).catch(function () {});
   function loadAdmin() {
     if (!isAdmin) return;
