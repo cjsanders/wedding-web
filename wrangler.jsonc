@@ -9,13 +9,17 @@
 		"binding": "ASSETS",
 		"run_worker_first": true
 	},
+	// re-sniff the Airbnb lodging radar four times a day (see refreshAirbnbs in worker.js)
+	"triggers": {
+		"crons": ["17 */6 * * *"]
+	},
 	"d1_databases": [
 		{
 			// binding must stay "DB" — src/worker.js reads env.DB
 			"binding": "DB",
 			"database_name": "wedding",
 			"database_id": "68f6a787-550a-4c0e-9b92-6de7e29b8ffb",
-			"remote": true
+			"remote": false
 		}
 	],
 	"observability": {

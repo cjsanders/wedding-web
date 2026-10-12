@@ -779,6 +779,15 @@
   .jr-links b { display: block; font-size: 10px; letter-spacing: .08em; color: #8a97a8; margin-bottom: 2px; }
   .jr-links a { color: #0000cc; }
   .jr-links span { color: #666; }
+  /* airbnb photo cards under an answer (see renderStays) */
+  .jr-stays { border: 1px solid #d9e4f2; border-top: 0; background: #fffdf2; padding: 8px 14px 12px; }
+  .jr-stays > b { display: block; font: bold 10px/1.8 Arial, Helvetica, sans-serif; letter-spacing: .08em; color: #8a97a8; }
+  .jr-stay { display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid #e0d6b8; padding: 6px; margin-top: 6px; text-decoration: none; }
+  .jr-stay:hover { border-color: #b5498a; background: #fff6fb; }
+  .jr-stay .ph { display: block; width: 74px; height: 56px; flex-shrink: 0; border: 1px solid #ccc; object-fit: cover; background: #eef3fa; font-size: 26px; line-height: 56px; text-align: center; }
+  .jr-stay .t { font: bold 12px/1.35 Arial, Helvetica, sans-serif; color: #0000cc; text-decoration: underline; }
+  .jr-stay .m { font: 11px/1.5 Arial, Helvetica, sans-serif; color: #666; }
+  .jr-stay .m .price { color: #067a2a; font-weight: bold; }
   .jr-reply { display: flex; margin-top: 10px; }
   .page input.jeeves-r {
     flex: 1;
@@ -1283,6 +1292,12 @@
       <h3>📖 Guestbook Patrol</h3>
       <p class="center small">Delete spam, duplicates, or anything Aunt Carol regrets. Buttons ask twice — we believe in second chances.</p>
       <div id="adm-gb"></div>
+
+      <h3>📡 Lodging Radar</h3>
+      <p class="center small">Airbnb listings near the venue for the wedding weekend, auto-scraped every 6 hours and briefed to Jeeeves
+        (ask him "where should I stay?"). A failed scrape keeps the last good batch.</p>
+      <div class="whitebox center" id="adm-bnb-stats">checking the radar…</div>
+      <p class="center"><button type="button" class="btn" id="adm-bnb-refresh">📡 RE-SNIFF NOW</button> <span class="small" id="adm-bnb-status"></span></p>
     </section>
     </main>
 
@@ -1419,6 +1434,12 @@
     }).catch(function () {});
     fetch('/api/guestbook').then(function (r) { return r.json(); }).then(function (d) {
       if (d && d.entries) renderAdminGb(d.entries);
+    }).catch(function () {});
+    fetch('/api/airbnbs').then(function (r) { return r.json(); }).then(function (d) {
+      var el = document.getElementById('adm-bnb-stats');
+      el.textContent = d && d.listings && d.listings.length
+        ? '🏠 ' + d.listings.length + ' listings on the radar · last sniffed ' + d.fetched_at + ' UTC'
+        : '🦗 radar is empty — hit RE-SNIFF (needs the CF_ACCOUNT_ID + CF_API_TOKEN secrets)';
     }).catch(function () {});
   }
   var MEAL_ICO = { chicken: '🍗', steak: '🥩', veggie: '🥦' };
@@ -1666,6 +1687,22 @@
         status.textContent = '✖ import jammed — ' + ((d && d.error) || 'try again');
       }
     }).catch(function () { status.textContent = '✖ import jammed — try again'; });
+  });
+  document.getElementById('adm-bnb-refresh').addEventListener('click', function () {
+    var btn = this, status = document.getElementById('adm-bnb-status');
+    btn.disabled = true;
+    status.textContent = 'sniffing… (a real browser is loading Airbnb, ~30s)';
+    fetch('/api/admin/airbnbs/refresh', { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        status.textContent = d && d.ok
+          ? '✓ fetched ' + d.count + ' listings!!'
+          : '✖ ' + ((d && d.error) || 'the radar jammed — try again');
+        jvStaysPromise = null; // jeeves re-fetches the fresh batch next time
+        loadAdmin();
+      })
+      .catch(function () { status.textContent = '✖ the radar jammed — try again'; })
+      .then(function () { btn.disabled = false; });
   });
   function renderAdminGb(entries) {
     var wrap = document.getElementById('adm-gb');
@@ -2107,7 +2144,7 @@
       a: 'Kindly submit your RSVP by February 27, 2027 — the form is right here on this very website. Should you forget, CJ’s mother will telephone you, and I shall be unable to protect you. I am small.' },
     { match: /wear|dress|attire|outfit|clothes|suit|code/i,
       a: 'The dress code is “Canyon Formal / 2 Cool 4 School.” Loud colors, flowy layers, a jacket for the canyon night. I shall be wearing my formal collar. If you match the decor (hot pink + gold) you win a prize — I have seen the prize. I tried to eat the prize.' },
-    { match: /stay|hotel|motel|room|sleep|lodg|camp/i,
+    { match: /stay|hotel|motel|room|sleep|lodg|camp|airbnb|bnb|hot.?tub/i,
       a: 'The room block is at the Starlite Motor Lodge, down on PCH — say “CJ & MARGARET 4EVER” at the desk for the group rate. The Pink Flamingo Inn is down the hill in Malibu and extremely pink. Camping is permitted in Topanga State Park but the canyon is cold at night and I will not be there to warm you.' },
     { match: /in.?n.?out|burger|midnight|late.?night|truck/i,
       a: 'CONFIRMED: the In-N-Out truck arrives at MIDNIGHT. This is not a drill. I repeat: this is NOT a drill. I have been promised one (1) plain patty for exemplary butler service. The negotiations were lengthy.' },
@@ -2238,6 +2275,81 @@
     });
     ex.card.parentNode.insertBefore(box, ex.card.nextSibling);
   }
+  /* airbnb photo cards — Jeeeves tags listings as [[room:123]]; the tags are
+     stripped from his prose and matched against the cached scrape from
+     /api/airbnbs, fetched once and only when a tag first shows up */
+  var jvStaysPromise = null;
+  function fetchStays() {
+    if (!jvStaysPromise) {
+      jvStaysPromise = fetch('/api/airbnbs')
+        .then(function (r) { return r.json(); })
+        .then(function (d) { return (d && d.listings) || []; })
+        .catch(function () { return []; });
+    }
+    return jvStaysPromise;
+  }
+  function renderStays(ids, ex) {
+    if (!ids.length) return;
+    fetchStays().then(function (all) {
+      var stays = [];
+      ids.forEach(function (id) {
+        all.forEach(function (s) { if (s.id === id) stays.push(s); });
+      });
+      if (!stays.length) return;
+      var box = document.createElement('div');
+      box.className = 'jr-stays';
+      var h = document.createElement('b');
+      h.textContent = 'JEEEVES SNIFFED OUT THESE CRASH PADS:';
+      box.appendChild(h);
+      stays.slice(0, 3).forEach(function (s) {
+        var a = document.createElement('a');
+        a.className = 'jr-stay';
+        a.href = s.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        var ph;
+        if (s.img) {
+          ph = document.createElement('img');
+          ph.className = 'ph';
+          ph.src = s.img;
+          ph.alt = '';
+          ph.loading = 'lazy';
+          ph.addEventListener('error', function () { // dead hotlink → house emoji
+            var fb = document.createElement('span');
+            fb.className = 'ph';
+            fb.textContent = '🏠';
+            ph.replaceWith(fb);
+          });
+        } else {
+          ph = document.createElement('span');
+          ph.className = 'ph';
+          ph.textContent = '🏠';
+        }
+        var txt = document.createElement('span');
+        var t = document.createElement('span');
+        t.className = 't';
+        t.textContent = s.title;
+        var m = document.createElement('span');
+        m.className = 'm';
+        var facts = [s.type, s.beds].filter(Boolean).join(' · ');
+        if (s.rating) facts += (facts ? ' · ' : '') + '★' + s.rating + (s.reviews ? ' (' + s.reviews + ')' : '');
+        m.appendChild(document.createTextNode(facts + (s.price ? ' — ' : '')));
+        if (s.price) {
+          var pr = document.createElement('span');
+          pr.className = 'price';
+          pr.textContent = s.price + ' for the weekend';
+          m.appendChild(pr);
+        }
+        txt.appendChild(t);
+        txt.appendChild(document.createElement('br'));
+        txt.appendChild(m);
+        a.appendChild(ph);
+        a.appendChild(txt);
+        box.appendChild(a);
+      });
+      ex.card.parentNode.insertBefore(box, ex.card.nextSibling);
+    });
+  }
   function jeevesAnswer(q) {
     for (var i = 0; i < JEEVES_QA.length; i++) {
       if (JEEVES_QA[i].match.test(q)) return JEEVES_QA[i].a;
@@ -2256,6 +2368,14 @@
   }
   /* stream the answer word-by-word with a blinking cursor, like the fancy AI chatbots do */
   function typeAnswer(text, ex) {
+    // pull the [[room:123]] lodging tags out of the prose — they become photo
+    // cards after typing finishes (start the fetch now so they're ready)
+    var roomIds = [];
+    text = text.replace(/\s*\[\[room:(\d+)\]\]/g, function (_, id) {
+      if (roomIds.indexOf(id) === -1) roomIds.push(id);
+      return '';
+    }).trim();
+    if (roomIds.length) fetchStays();
     // split into typed-text and *action* segments
     var segs = [], re = /\*([^*\n]{2,80})\*/g, last = 0, m;
     while ((m = re.exec(text)) !== null) {
@@ -2276,6 +2396,7 @@
       if (si >= segs.length) {
         cursor.remove();
         renderListings(text, ex);
+        renderStays(roomIds, ex); // async, lands above the links box
         return;
       }
       var seg = segs[si];

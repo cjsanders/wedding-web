@@ -33,6 +33,15 @@ CREATE TABLE IF NOT EXISTS guestlist (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Jeeeves' lodging radar: the latest Airbnb scrape for the wedding weekend.
+-- One row, replaced on every successful refresh; a failed scrape keeps the
+-- previous snapshot so guests never see an empty/broken list.
+CREATE TABLE IF NOT EXISTS airbnb_cache (
+  id         INTEGER PRIMARY KEY CHECK (id = 1),
+  listings   TEXT NOT NULL,               -- JSON array of {id,title,type,beds,price,rating,reviews,img,url}
+  fetched_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS counters (
   name  TEXT PRIMARY KEY,
   value INTEGER NOT NULL
