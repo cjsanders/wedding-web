@@ -21,8 +21,24 @@ for 180 days. Passwords are compared case-insensitively.
 ```sh
 npm install
 npm run db:local          # create tables in the local D1 emulator
+cp .dev.vars.example .dev.vars   # local secrets (gitignored); edit if you like
 npx wrangler dev          # http://localhost:8787 — password is "woof" (.dev.vars)
 ```
+
+`.dev.vars` holds the local-only secrets (`SITE_PASSWORD`, `ADMIN_PASSWORD`,
+`AUTH_SECRET`, plus optional `ANTHROPIC_API_KEY` / `CF_ACCOUNT_ID` /
+`CF_API_TOKEN`). Production uses `wrangler secret put` instead (see below).
+
+### Worktrees
+
+`node_modules/`, `.dev.vars` and the local D1 state in `.wrangler/` are all
+gitignored, so a fresh git worktree starts with none of them. In T3 Code the
+project's **Setup** script runs automatically on worktree creation: it installs
+deps, copies `.dev.vars` from the main checkout (falling back to
+`.dev.vars.example`), and seeds the local D1. Each worktree gets its own empty
+local database. The **Dev server** script starts `wrangler dev` on the first
+free port from 8787 upward, so two worktrees can run side by side; check the
+script output for the port if 8787 is taken.
 
 ## First deploy
 

@@ -1,0 +1,9 @@
+# Copy to .dev.vars (gitignored) for `wrangler dev`. Production uses `wrangler secret put`.
+SITE_PASSWORD=woof
+ADMIN_PASSWORD=admin-woof
+AUTH_SECRET=change-me-to-something-long-and-random
+# Optional — leave blank and Ask Jeeeves falls back to canned answers:
+# ANTHROPIC_API_KEY=
+# Optional — leave blank and the Airbnb radar is skipped (cron only):
+# CF_ACCOUNT_ID=
+# CF_API_TOKEN=
